@@ -1,5 +1,4 @@
 .gradle/
-build/
 
 # Eclipse stuff
 .classpath
@@ -46,8 +45,8 @@ out/
 # other stuff
 run/
 
-forktest-server
-forktest-api
+legitslimepaper-server
+legitslimepaper-api
 paper-api-generator
 
 !gradle/wrapper/gradle-wrapper.jar

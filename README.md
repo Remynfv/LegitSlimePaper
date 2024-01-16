@@ -1,4 +1,4 @@
-# ForkTest - A Paper fork, using paperweight
+# LegitSlimePaper - An AdvancedSlimePaper fork with command related features needed for the Legitimoose server.
 
 This is an example project, showcasing how to setup a fork of Paper (or any other fork using paperweight), using paperweight.
 

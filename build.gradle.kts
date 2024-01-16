@@ -1,6 +1,9 @@
+import io.papermc.paperweight.util.Git
+
 plugins {
     java
     `maven-publish`
+    id("org.kordamp.gradle.profiles") version "0.47.0"
 
     // Nothing special about this, just keep it up to date
     id("com.github.johnrengelman.shadow") version "8.1.1" apply false
@@ -50,70 +53,129 @@ subprojects {
     repositories {
         mavenCentral()
         maven(paperMavenPublicUrl)
+        maven("https://repo.infernalsuite.com/repository/maven-snapshots/")
+        maven("https://repo.rapture.pw/repository/maven-releases/")
+    }
+}
+
+//paperweight {
+//    serverProject = project(":legitslimepaper-server")
+//
+//    remapRepo = paperMavenPublicUrl
+//    decompileRepo = paperMavenPublicUrl
+//
+//    usePaperUpstream(providers.gradleProperty("advancedslimepaperRef")) {
+//        withPaperPatcher {
+//            apiPatchDir = layout.projectDirectory.dir("patches/api")
+//            apiOutputDir = layout.projectDirectory.dir("legitslimepaper-api")
+//
+//            serverPatchDir = layout.projectDirectory.dir("patches/server")
+//            serverOutputDir = layout.projectDirectory.dir("legitslimepaper-server")
+//
+//        }
+//        patchTasks.register("generatedApi") {
+//            isBareDirectory = true
+//            upstreamDirPath = "paper-api-generator/generated"
+//            patchDir = layout.projectDirectory.dir("patches/generatedApi")
+//            outputDir = layout.projectDirectory.dir("paper-api-generator/generated")
+//        }
+//    }
+//}
+
+//paperweight {
+//    serverProject.set(project(":legitslimepaper-server"))
+//
+//    remapRepo.set(paperMavenPublicUrl)
+//    decompileRepo.set(paperMavenPublicUrl)
+//
+//    useStandardUpstream("slimeworldmanager") {
+//        url.set(github("infernalsuite", "advancedslimepaper"))
+//        ref.set(providers.gradleProperty("advancedslimepaperRef"))
+//
+//        patchTasks.register("core") {
+//            isBareDirectory = true
+//            upstreamDirPath = "core"
+//            patchDir = layout.projectDirectory.dir("patches/core")
+//            outputDir = layout.projectDirectory.dir("core")
+//        }
+//
+//        patchTasks.register("aswmApi") {
+//            isBareDirectory = true
+//            upstreamDirPath = "api"
+//            patchDir = layout.projectDirectory.dir("patches/aswmApi")
+//            outputDir = layout.projectDirectory.dir("aswmApi")
+//        }
+//
+//        withStandardPatcher {
+//            apiSourceDirPath = "slimeworldmanager-api"
+//            serverSourceDirPath = "slimeworldmanager-server"
+//
+//
+//            buildDataDir
+//            apiPatchDir = layout.projectDirectory.dir("patches/api")
+//            apiOutputDir = layout.projectDirectory.dir("legitslimepaper-api")
+//
+//            serverPatchDir = layout.projectDirectory.dir("patches/server")
+//            serverOutputDir = layout.projectDirectory.dir("legitslimepaper-server")
+//        }
+//    }
+//}
+
+val paperDir = layout.projectDirectory.dir("AdvancedSlimePaper")
+val initSubmodules by tasks.registering {
+    outputs.upToDateWhen { false }
+    doLast {
+        Git(layout.projectDirectory)("submodule", "update", "--init").executeOut()
     }
 }
 
 paperweight {
-    serverProject = project(":forktest-server")
+    serverProject = project(":legitslimepaper-server")
 
     remapRepo = paperMavenPublicUrl
     decompileRepo = paperMavenPublicUrl
 
-    usePaperUpstream(providers.gradleProperty("paperRef")) {
-        withPaperPatcher {
-            apiPatchDir = layout.projectDirectory.dir("patches/api")
-            apiOutputDir = layout.projectDirectory.dir("forktest-api")
+    upstreams {
+        register("slimeworldmanager") {
+//            url = github("infernalsuite", "advancedslimepaper")
+//            ref = providers.gradleProperty("advancedslimepaperRef")
 
-            serverPatchDir = layout.projectDirectory.dir("patches/server")
-            serverOutputDir = layout.projectDirectory.dir("forktest-server")
-
-        }
-        patchTasks.register("generatedApi") {
-            isBareDirectory = true
-            upstreamDirPath = "paper-api-generator/generated"
-            patchDir = layout.projectDirectory.dir("patches/generatedApi")
-            outputDir = layout.projectDirectory.dir("paper-api-generator/generated")
-        }
-    }
-}
-
-//
-// Everything below here is optional if you don't care about publishing API or dev bundles to your repository
-//
-
-tasks.generateDevelopmentBundle {
-    apiCoordinates = "com.example.paperfork:forktest-api"
-    mojangApiCoordinates = "io.papermc.paper:paper-mojangapi"
-    libraryRepositories = listOf(
-        "https://repo.maven.apache.org/maven2/",
-        paperMavenPublicUrl,
-        // "https://my.repo/", // This should be a repo hosting your API (in this example, 'com.example.paperfork:forktest-api')
-    )
-}
-
-allprojects {
-    // Publishing API:
-    // ./gradlew :ForkTest-API:publish[ToMavenLocal]
-    publishing {
-        repositories {
-            maven {
-                name = "myRepoSnapshots"
-                url = uri("https://my.repo/")
-                // See Gradle docs for how to provide credentials to PasswordCredentials
-                // https://docs.gradle.org/current/samples/sample_publishing_credentials.html
-                credentials(PasswordCredentials::class)
+            upstreamDataTask {
+                dependsOn(initSubmodules)
+                projectDir = paperDir
             }
-        }
-    }
-}
 
-publishing {
-    // Publishing dev bundle:
-    // ./gradlew publishDevBundlePublicationTo(MavenLocal|MyRepoSnapshotsRepository) -PpublishDevBundle
-    if (project.hasProperty("publishDevBundle")) {
-        publications.create<MavenPublication>("devBundle") {
-            artifact(tasks.generateDevelopmentBundle) {
-                artifactId = "dev-bundle"
+            patchTasks {
+                register("api") {
+                    upstreamDir = paperDir.dir("slimeworldmanager-api")
+                    patchDir = layout.projectDirectory.dir("patches/api")
+                    outputDir = layout.projectDirectory.dir("legitslimepaper-api")
+                }
+                register("server") {
+                    upstreamDir = paperDir.dir("slimeworldmanager-server")
+                    patchDir = layout.projectDirectory.dir("patches/server")
+                    outputDir = layout.projectDirectory.dir("legitslimepaper-server")
+                    importMcDev = true
+                }
+//                register("generatedApi") {
+//                    isBareDirectory = true
+//                    upstreamDir = paperDir.dir("paper-api-generator/generated")
+//                    patchDir = layout.projectDirectory.dir("patches/generatedApi")
+//                    outputDir = layout.projectDirectory.dir("paper-api-generator/generated")
+//                }
+                register("core") {
+                    isBareDirectory = true
+                    upstreamDir = paperDir.dir("core")
+                    patchDir = layout.projectDirectory.dir("patches/core")
+                    outputDir = layout.projectDirectory.dir("core")
+                }
+
+                register("aswmApi") {
+                    isBareDirectory = true
+                    upstreamDir = paperDir.dir("api")
+                    patchDir = layout.projectDirectory.dir("patches/aswmApi")
+                    outputDir = layout.projectDirectory.dir("api")
+                }
             }
         }
     }
