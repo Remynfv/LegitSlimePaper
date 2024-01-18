@@ -1,0 +1,63 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Legitimoose <legitimoose@gmail.com>
+Date: Wed, 17 Jan 2024 17:50:08 -0800
+Subject: [PATCH] Prevent custom commands in command blocks
+
+Add a new isVanilla boolean to command nodes. This is set when commands are first registered. Currently no way
+to set this later on.
+When server commands are dispatched, check if running in a command block,
+and if it's not vanilla, act like it's not a valid command.
+
+diff --git a/src/main/java/com/mojang/brigadier/tree/CommandNode.java b/src/main/java/com/mojang/brigadier/tree/CommandNode.java
+index 39844531b03eb8a6c70700b4ecbf0ff1a557424d..a6e5bd4cd3ab1bdb8680ac896bf48e2a414baf6f 100644
+--- a/src/main/java/com/mojang/brigadier/tree/CommandNode.java
++++ b/src/main/java/com/mojang/brigadier/tree/CommandNode.java
+@@ -42,6 +42,7 @@ public abstract class CommandNode<S> implements Comparable<CommandNode<S>> {
+         this.arguments.remove(name);
+     }
+     // CraftBukkit end
++    public Boolean isVanilla = false; // Moose
+ 
+     protected CommandNode(final Command<S> command, final Predicate<S> requirement, final CommandNode<S> redirect, final RedirectModifier<S> modifier, final boolean forks) {
+         this.command = command;
+diff --git a/src/main/java/net/minecraft/commands/Commands.java b/src/main/java/net/minecraft/commands/Commands.java
+index 3eec879bf3975636739b2491cc05b8177032d16d..c30bbdb943912a40d34f43cdf63779d8448a617a 100644
+--- a/src/main/java/net/minecraft/commands/Commands.java
++++ b/src/main/java/net/minecraft/commands/Commands.java
+@@ -120,6 +120,7 @@ import net.minecraft.server.commands.data.DataCommands;
+ import net.minecraft.server.level.ServerPlayer;
+ import net.minecraft.tags.TagKey;
+ import net.minecraft.util.profiling.jfr.JvmProfiler;
++import net.minecraft.world.level.BaseCommandBlock;
+ import org.slf4j.Logger;
+ 
+ // CraftBukkit start
+@@ -235,7 +236,12 @@ public class Commands {
+         if (environment.includeIntegrated) {
+             PublishCommand.register(this.dispatcher);
+         }
+-        this.vanillaCommandNodes.addAll(this.dispatcher.getRoot().getChildren()); // Paper
++        // Moose start - Special boolean to track vanilla commands (allowed to be ran by command blocks and click events).
++        for (CommandNode<CommandSourceStack> node : this.dispatcher.getRoot().getChildren()) {
++            node.isVanilla = true;
++            this.vanillaCommandNodes.add(node);
++        }
++        // Moose end
+ 
+         // Paper start
+         for (final CommandNode<CommandSourceStack> node : this.dispatcher.getRoot().getChildren()) {
+@@ -327,6 +333,14 @@ public class Commands {
+             byte b1;
+ 
+             try {
++                // Moose start
++                if (parseresults.getContext().getSource().source instanceof BaseCommandBlock) {
++                    if (!parseresults.getContext().getNodes().get(0).getNode().isVanilla) {
++                        throw new Exception("Non-vanilla commands cannot be executed in command blocks.");
++                    }
++                }
++                // Moose end
++
+                 int i = this.dispatcher.execute(parseresults);
+ 
+                 return i;
