@@ -1,0 +1,79 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Legitimoose <legitimoose@gmail.com>
+Date: Thu, 18 Jan 2024 16:58:20 -0800
+Subject: [PATCH] Remove clickEvents with blacklisted commands
+
+Filters clickEvents whenever a Style class is created. This uses a lot of iterations, but only
+runs when there is a runCommand clickEvent. The performance impact should be minimal.
+
+diff --git a/src/main/java/net/minecraft/network/chat/Style.java b/src/main/java/net/minecraft/network/chat/Style.java
+index a5df17c9ad364884da8c37daa4ae9073319388a5..5592f9b633006a70651baa4364cf344303f479e3 100644
+--- a/src/main/java/net/minecraft/network/chat/Style.java
++++ b/src/main/java/net/minecraft/network/chat/Style.java
+@@ -17,6 +17,7 @@ import javax.annotation.Nullable;
+ import net.minecraft.ChatFormatting;
+ import net.minecraft.ResourceLocationException;
+ import net.minecraft.resources.ResourceLocation;
++import net.minecraft.server.MinecraftServer;
+ import net.minecraft.util.GsonHelper;
+ 
+ public class Style {
+@@ -73,7 +74,25 @@ public class Style {
+         this.underlined = underlined;
+         this.strikethrough = strikethrough;
+         this.obfuscated = obfuscated;
+-        this.clickEvent = clickEvent;
++        // Moose start
++        boolean blackListedCommand = false;
++        if (clickEvent != null && clickEvent.getAction() == ClickEvent.Action.RUN_COMMAND) {
++            String cmd = clickEvent.getValue();
++            cmd = cmd.startsWith("/") ? cmd.substring(1) : cmd;
++            cmd = cmd.split(" ", 2)[0];
++            String finalCmd = cmd;
++
++            if (cmd.equalsIgnoreCase("stop") || cmd.equalsIgnoreCase("kick") || cmd.equalsIgnoreCase("op")
++                || cmd.equalsIgnoreCase("deop") || cmd.equalsIgnoreCase("ban") || cmd.equalsIgnoreCase("ban-ip")
++                || cmd.equalsIgnoreCase("pardon") || cmd.equalsIgnoreCase("pardon-ip") || cmd.equalsIgnoreCase("reload")) {
++                blackListedCommand = true;
++            }
++            else if (MinecraftServer.getServer().getCommands().vanillaCommandNodes.stream().noneMatch((node) -> finalCmd.startsWith(node.getName()))) {
++                blackListedCommand = true;
++            }
++        }
++        this.clickEvent = blackListedCommand ? null : clickEvent;
++        // Moose end
+         this.hoverEvent = hoverEvent;
+         this.insertion = insertion;
+         this.font = font;
+@@ -482,10 +501,31 @@ public class Style {
+                 }
+ 
+                 if (style.clickEvent != null) {
++//                    // Moose start
++//                    boolean blackListedCommand = false;
++//                    if (style.clickEvent.getAction() == ClickEvent.Action.RUN_COMMAND) {
++//                        String cmd = style.clickEvent.getValue();
++//                        cmd = cmd.startsWith("/") ? cmd.substring(1) : cmd;
++//                        cmd = cmd.split(" ", 2)[0];
++//                        String finalCmd = cmd;
++//
++//                        if (cmd.equalsIgnoreCase("stop") || cmd.equalsIgnoreCase("kick") || cmd.equalsIgnoreCase("op")
++//                            || cmd.equalsIgnoreCase("deop") || cmd.equalsIgnoreCase("ban") || cmd.equalsIgnoreCase("ban-ip")
++//                            || cmd.equalsIgnoreCase("pardon") || cmd.equalsIgnoreCase("pardon-ip") || cmd.equalsIgnoreCase("reload")) {
++//                            blackListedCommand = true;
++//                        }
++//                        else if (MinecraftServer.getServer().getCommands().vanillaCommandNodes.stream().noneMatch((node) -> finalCmd.startsWith(node.getName()))) {
++//                            blackListedCommand = true;
++//                        }
++//                    }
++
++//                    if (!blackListedCommand) {
++                    // Moose end
+                     JsonObject jsonObject2 = new JsonObject();
+                     jsonObject2.addProperty("action", style.clickEvent.getAction().getName());
+                     jsonObject2.addProperty("value", style.clickEvent.getValue());
+                     jsonObject.add("clickEvent", jsonObject2);
++//                    } // Moose
+                 }
+ 
+                 if (style.hoverEvent != null) {
