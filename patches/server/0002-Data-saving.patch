@@ -10,18 +10,18 @@ NOTE: Ideally we'd use an access transformer, but they seem to be broken in fork
 # public net.minecraft.server.MinecraftServer readScoreboard(Lnet/minecraft/world/level/storage/DimensionDataStorage;)V
 
 diff --git a/src/main/java/com/infernalsuite/aswm/SlimeNMSBridgeImpl.java b/src/main/java/com/infernalsuite/aswm/SlimeNMSBridgeImpl.java
-index 21c3ea3596a1f954618348afae2b2f7f058393d1..177df04518eac8dfe6b17fc17089b2398b2f5d67 100644
+index 18f0f7933c42a7609a3d7bd775b24c372baae175..42e52d57c54c708d24adf631689bdd17a22ff3b1 100644
 --- a/src/main/java/com/infernalsuite/aswm/SlimeNMSBridgeImpl.java
 +++ b/src/main/java/com/infernalsuite/aswm/SlimeNMSBridgeImpl.java
-@@ -86,6 +86,7 @@ public class SlimeNMSBridgeImpl implements SlimeNMSBridge {
+@@ -102,6 +102,7 @@ public class SlimeNMSBridgeImpl implements SlimeNMSBridge {
          // Some stuff is needed when loading overworld world
          SlimeLevelInstance instance = ((SlimeInMemoryWorld) this.loadInstance(defaultWorld, Level.OVERWORLD)).getInstance();
          DimensionDataStorage worldpersistentdata = instance.getDataStorage();
-+        instance.getServer().readScoreboard(worldpersistentdata);
++        instance.getServer().readScoreboard(worldpersistentdata); // Moose
          instance.getCraftServer().scoreboardManager = new org.bukkit.craftbukkit.scoreboard.CraftScoreboardManager(instance.getServer(), instance.getScoreboard());
          instance.getServer().commandStorage = new CommandStorage(worldpersistentdata);
  
-@@ -236,4 +237,4 @@ public class SlimeNMSBridgeImpl implements SlimeNMSBridge {
+@@ -251,4 +252,4 @@ public class SlimeNMSBridgeImpl implements SlimeNMSBridge {
          return data;
      }
  
@@ -29,7 +29,7 @@ index 21c3ea3596a1f954618348afae2b2f7f058393d1..177df04518eac8dfe6b17fc17089b239
 \ No newline at end of file
 +}
 diff --git a/src/main/java/com/infernalsuite/aswm/level/SlimeLevelInstance.java b/src/main/java/com/infernalsuite/aswm/level/SlimeLevelInstance.java
-index 65b475b1292e01c918c1f8144599b5fa78688e97..51f4a4b45e1e6cb4557f7c041e0483a083e259ab 100644
+index b28c2b917accc0249e5df19a65db8820336b7279..6b688ea335604162308072242fd8f979e8b3be39 100644
 --- a/src/main/java/com/infernalsuite/aswm/level/SlimeLevelInstance.java
 +++ b/src/main/java/com/infernalsuite/aswm/level/SlimeLevelInstance.java
 @@ -59,16 +59,10 @@ public class SlimeLevelInstance extends ServerLevel {
@@ -64,15 +64,15 @@ index 65b475b1292e01c918c1f8144599b5fa78688e97..51f4a4b45e1e6cb4557f7c041e0483a0
                  MinecraftServer.getServer().progressListenerFactory.create(11), false, null, 0,
                  Collections.emptyList(), true, environment, null, null);
          this.slimeInstance = new SlimeInMemoryWorld(slimeBootstrap, this);
-@@ -118,6 +112,7 @@ public class SlimeLevelInstance extends ServerLevel {
+@@ -120,6 +114,7 @@ public class SlimeLevelInstance extends ServerLevel {
                  Bukkit.getPluginManager().callEvent(new WorldSaveEvent(getWorld()));
  
                  //this.getChunkSource().save(forceSave);
-+                this.getDataStorage().save(); // Moose
++                this.getDataStorage().save(false); // Moose
                  this.serverLevelData.setWorldBorder(this.getWorldBorder().createSettings());
-                 this.serverLevelData.setCustomBossEvents(MinecraftServer.getServer().getCustomBossEvents().save());
+                 this.serverLevelData.setCustomBossEvents(MinecraftServer.getServer().getCustomBossEvents().save(MinecraftServer.getServer().registryAccess()));
  
-@@ -194,4 +189,4 @@ public class SlimeLevelInstance extends ServerLevel {
+@@ -205,4 +200,4 @@ public class SlimeLevelInstance extends ServerLevel {
      //        this.slimeInstance.unload(chunk);
      //        super.unload(chunk);
      //    }
@@ -80,11 +80,11 @@ index 65b475b1292e01c918c1f8144599b5fa78688e97..51f4a4b45e1e6cb4557f7c041e0483a0
 \ No newline at end of file
 +}
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 33ba5fafba15d5775880666e41d9e9ed187a2dfa..c87187d70695f71db4994ce3c78104510ab69bd4 100644
+index 42ea1dcb10a2586a4eb4ee7b049a07705bbe4017..19c26363efe57157f9d0ecea082fdd0001b9b5fc 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -407,7 +407,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
-         this.paperConfigurations = services.paperConfigurations(); // Paper
+@@ -420,7 +420,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+         this.paperConfigurations = services.paperConfigurations(); // Paper - add paper configuration files
      }
  
 -    private void readScoreboard(DimensionDataStorage persistentStateManager) {

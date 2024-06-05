@@ -3,14 +3,13 @@ From: Legitimoose <legitimoose@gmail.com>
 Date: Thu, 18 Jan 2024 17:15:40 -0800
 Subject: [PATCH] Allow negative explosion radius
 
-
 Co-authored-by: Nico314159 <nicolino.will@gmail.com>
 
 diff --git a/src/main/java/net/minecraft/world/level/Explosion.java b/src/main/java/net/minecraft/world/level/Explosion.java
-index 45243249a561440512ef2a620c60b02e159c80e2..e416f2909a594b737d2228bc6e9b1087ae84724c 100644
+index 082b804f4793f72e76361f5427f0358273454b3d..84c0d95b8a7991cdcb9b88cbe86749b58ab448a8 100644
 --- a/src/main/java/net/minecraft/world/level/Explosion.java
 +++ b/src/main/java/net/minecraft/world/level/Explosion.java
-@@ -87,7 +87,7 @@ public class Explosion {
+@@ -98,7 +98,7 @@ public class Explosion {
          this.hitPlayers = Maps.newHashMap();
          this.level = world;
          this.source = entity;
@@ -19,7 +18,7 @@ index 45243249a561440512ef2a620c60b02e159c80e2..e416f2909a594b737d2228bc6e9b1087
          this.x = x;
          this.y = y;
          this.z = z;
-@@ -402,11 +402,7 @@ public class Explosion {
+@@ -425,11 +425,7 @@ public class Explosion {
      }
  
      public void explode() {
@@ -29,6 +28,6 @@ index 45243249a561440512ef2a620c60b02e159c80e2..e416f2909a594b737d2228bc6e9b1087
 -        }
 -        // CraftBukkit end
 +        // Moose - Remove minimum radius
-         this.level.gameEvent(this.source, GameEvent.EXPLODE, new Vec3(this.x, this.y, this.z));
+         this.level.gameEvent(this.source, (Holder) GameEvent.EXPLODE, new Vec3(this.x, this.y, this.z));
          Set<BlockPos> set = Sets.newHashSet();
          boolean flag = true;

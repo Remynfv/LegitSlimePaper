@@ -5,10 +5,10 @@ Subject: [PATCH] Build changes
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 106fd711c9094e119ba99cc46de4601247e5985f..49594f5772863eabca85a823980ba08e2cceb877 100644
+index 316d03791a97af50f882c0271cbacf3d2a7af5b3..aaeeb2920d44356820d0708d4830aa4a1a324674 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
-@@ -13,8 +13,8 @@ configurations.named(log4jPlugins.compileClasspathConfigurationName) {
+@@ -14,8 +14,8 @@ configurations.named(log4jPlugins.compileClasspathConfigurationName) {
  val alsoShade: Configuration by configurations.creating
  
  dependencies {
@@ -16,18 +16,29 @@ index 106fd711c9094e119ba99cc46de4601247e5985f..49594f5772863eabca85a823980ba08e
      // ASWM start
 -    implementation(project(":slimeworldmanager-api"))
      implementation(project(":core"))
-     implementation("io.papermc.paper:paper-mojangapi:1.20-R0.1-SNAPSHOT") {
-         exclude("io.papermc.paper", "paper-api")
-@@ -75,7 +75,7 @@ tasks.jar {
+     // ASWM end
+     // Paper start
+@@ -84,14 +84,14 @@ tasks.jar {
+         val gitBranch = git("rev-parse", "--abbrev-ref", "HEAD").getText().trim() // Paper
          attributes(
              "Main-Class" to "org.bukkit.craftbukkit.Main",
-             "Implementation-Title" to "CraftBukkit",
--            "Implementation-Version" to "git-SlimeWorldManager-$implementationVersion",
-+            "Implementation-Version" to "git-LegitSlimePaper-$implementationVersion",
+-            "Implementation-Title" to "AdvancedSlimePaper",
++            "Implementation-Title" to "LegitSlimePaper", // Moose
+             "Implementation-Version" to implementationVersion,
              "Implementation-Vendor" to date, // Paper
-             "Specification-Title" to "Bukkit",
+-            "Specification-Title" to "AdvancedSlimePaper",
++            "Specification-Title" to "LegitSlimePaper", // Moose
              "Specification-Version" to project.version,
-@@ -159,7 +159,7 @@ fun TaskContainer.registerRunTask(
+-            "Specification-Vendor" to "InfernalSuite Team",
+-            "Brand-Id" to "infernalsuite:advancedslimepaper",
+-            "Brand-Name" to "AdvancedSlimePaper",
++            "Specification-Vendor" to "Legitimoose",
++            "Brand-Id" to "legitimoose:legitslimepaper",
++            "Brand-Name" to "LegitSlimePaper",
+             "Build-Number" to (build ?: ""),
+             "Build-Time" to Instant.now().toString(),
+             "Git-Branch" to gitBranch, // Paper
+@@ -148,7 +148,7 @@ fun TaskContainer.registerRunTask(
      name: String,
      block: JavaExec.() -> Unit
  ): TaskProvider<JavaExec> = register<JavaExec>(name) {
@@ -36,32 +47,6 @@ index 106fd711c9094e119ba99cc46de4601247e5985f..49594f5772863eabca85a823980ba08e
      mainClass.set("org.bukkit.craftbukkit.Main")
      standardInput = System.`in`
      workingDir = rootProject.layout.projectDirectory
-diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 91b318e50fb271bd836f891a30270601f5a94790..33ba5fafba15d5775880666e41d9e9ed187a2dfa 100644
---- a/src/main/java/net/minecraft/server/MinecraftServer.java
-+++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -1712,7 +1712,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
- 
-     @DontObfuscate
-     public String getServerModName() {
--        return "SlimeWorldManager"; // ASWM // Paper - Paper > // Spigot - Spigot > // CraftBukkit - cb > vanilla!
-+        return "LegitSlimePaper"; // Moose // ASWM // Paper - Paper > // Spigot - Spigot > // CraftBukkit - cb > vanilla!
-     }
- 
-     public SystemReport fillSystemReport(SystemReport details) {
-diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index f824b6a4e17bed3e82c25f7c6711196f0bb52cd3..5999d17db3f96deb6a04b87d0c116f9370a9ec00 100644
---- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-+++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-@@ -269,7 +269,7 @@ import javax.annotation.Nullable; // Paper
- import javax.annotation.Nonnull; // Paper
- 
- public final class CraftServer implements Server {
--    private final String serverName = "SlimeWorldManager"; // Paper // SWM
-+    private final String serverName = "LegitSlimePaper"; // Paper // SWM // Moose
-     private final String serverVersion;
-     private final String bukkitVersion = Versioning.getBukkitVersion();
-     private final Logger logger = Logger.getLogger("Minecraft");
 diff --git a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java b/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
 index 29e29fb2228f08dff3edd8bf651220b83b16ed7b..d0473ffb840c8668719f8b6e3200db615c4a3277 100644
 --- a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java

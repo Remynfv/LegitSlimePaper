@@ -5,10 +5,10 @@ Subject: [PATCH] Add permission for game master blocks
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/player/Player.java b/src/main/java/net/minecraft/world/entity/player/Player.java
-index 481c3e321cfc0f20bb1c4c6942b8bdbd23c06339..882e9cbe3a4961a81fcb696c928ba7330d568522 100644
+index 686374e89e41b0917791264f3281f7384835bca8..4605f8c0e2ecb22ca0524ccec6eca9c420965912 100644
 --- a/src/main/java/net/minecraft/world/entity/player/Player.java
 +++ b/src/main/java/net/minecraft/world/entity/player/Player.java
-@@ -2280,7 +2280,7 @@ public abstract class Player extends LivingEntity {
+@@ -2260,7 +2260,7 @@ public abstract class Player extends LivingEntity {
      }
  
      public boolean canUseGameMasterBlocks() {

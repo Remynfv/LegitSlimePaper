@@ -9,10 +9,10 @@ When server commands are dispatched, check if running in a command block,
 and if it's not vanilla, act like it's not a valid command.
 
 diff --git a/src/main/java/com/mojang/brigadier/tree/CommandNode.java b/src/main/java/com/mojang/brigadier/tree/CommandNode.java
-index 39844531b03eb8a6c70700b4ecbf0ff1a557424d..3b0dfba39781d93ece41757950c8d7a2ffe7037c 100644
+index 03ce8a2abb6dceaa922dcce7f3adbc228bbde4bc..89602810e919a92fa7e771c1b443605afaa0c82d 100644
 --- a/src/main/java/com/mojang/brigadier/tree/CommandNode.java
 +++ b/src/main/java/com/mojang/brigadier/tree/CommandNode.java
-@@ -42,6 +42,7 @@ public abstract class CommandNode<S> implements Comparable<CommandNode<S>> {
+@@ -44,6 +44,7 @@ public abstract class CommandNode<S> implements Comparable<CommandNode<S>> {
          this.arguments.remove(name);
      }
      // CraftBukkit end
@@ -21,30 +21,22 @@ index 39844531b03eb8a6c70700b4ecbf0ff1a557424d..3b0dfba39781d93ece41757950c8d7a2
      protected CommandNode(final Command<S> command, final Predicate<S> requirement, final CommandNode<S> redirect, final RedirectModifier<S> modifier, final boolean forks) {
          this.command = command;
 diff --git a/src/main/java/net/minecraft/commands/Commands.java b/src/main/java/net/minecraft/commands/Commands.java
-index 3eec879bf3975636739b2491cc05b8177032d16d..2f67bd8dc097ea90582d0f5aa3af849e4f846802 100644
+index 24086a82e1687cb1925398218b18c2384fa8f6e3..ab7e7fb6a1b51693822189d5f59313c94df92ddd 100644
 --- a/src/main/java/net/minecraft/commands/Commands.java
 +++ b/src/main/java/net/minecraft/commands/Commands.java
-@@ -34,7 +34,6 @@ import net.minecraft.gametest.framework.TestCommand;
- import net.minecraft.network.chat.ClickEvent;
- import net.minecraft.network.chat.CommonComponents;
- import net.minecraft.network.chat.Component;
--import net.minecraft.network.chat.ComponentUtils;
- import net.minecraft.network.chat.HoverEvent;
- import net.minecraft.network.chat.MutableComponent;
- import net.minecraft.network.protocol.game.ClientboundCommandsPacket;
-@@ -120,6 +119,7 @@ import net.minecraft.server.commands.data.DataCommands;
- import net.minecraft.server.level.ServerPlayer;
+@@ -134,6 +134,7 @@ import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.tags.TagKey;
  import net.minecraft.util.profiling.jfr.JvmProfiler;
+ import net.minecraft.world.level.GameRules;
 +import net.minecraft.world.level.BaseCommandBlock;
  import org.slf4j.Logger;
  
  // CraftBukkit start
-@@ -235,7 +235,24 @@ public class Commands {
-         if (environment.includeIntegrated) {
+@@ -258,6 +259,26 @@ public class Commands {
              PublishCommand.register(this.dispatcher);
          }
--        this.vanillaCommandNodes.addAll(this.dispatcher.getRoot().getChildren()); // Paper
+ 
++//        this.vanillaCommandNodes.addAll(this.dispatcher.getRoot().getChildren()); // Paper
 +        // Moose start - Special boolean to track command block allowed commands (allowed to be ran by command blocks and click events).
 +        for (CommandNode<CommandSourceStack> node : this.dispatcher.getRoot().getChildren()) {
 +            String cmd = node.getName();
@@ -60,24 +52,33 @@ index 3eec879bf3975636739b2491cc05b8177032d16d..2f67bd8dc097ea90582d0f5aa3af849e
 +                node.commandBlockAllowed = true;
 +            }
 +
-+            this.vanillaCommandNodes.add(node);
++//            this.vanillaCommandNodes.add(node);
 +        }
 +        // Moose end
- 
-         // Paper start
-         for (final CommandNode<CommandSourceStack> node : this.dispatcher.getRoot().getChildren()) {
-@@ -327,6 +344,14 @@ public class Commands {
-             byte b1;
- 
-             try {
-+                // Moose start - Command block whitelist
-+                if (parseresults.getContext().getSource().source instanceof BaseCommandBlock) {
-+                    if (!parseresults.getContext().getNodes().get(0).getNode().commandBlockAllowed) {
-+                        throw new Exception("Non-vanilla commands cannot be executed in command blocks.");
-+                    }
-+                }
-+                // Moose end
 +
-                 int i = this.dispatcher.execute(parseresults);
+         // Paper start - Vanilla command permission fixes
+         for (final CommandNode<CommandSourceStack> node : this.dispatcher.getRoot().getChildren()) {
+             if (node.getRequirement() == com.mojang.brigadier.builder.ArgumentBuilder.<CommandSourceStack>defaultRequirement()) {
+@@ -345,13 +366,21 @@ public class Commands {
+         ContextChain contextchain = this.finishParsing(parseresults, s, commandlistenerwrapper, label); // CraftBukkit // Paper - Add UnknownCommandEvent
  
-                 return i;
+         try {
++            // Moose start - Command block whitelist
++            if (parseresults.getContext().getSource().source instanceof BaseCommandBlock) {
++                if (!parseresults.getContext().getNodes().get(0).getNode().commandBlockAllowed) {
++                    throw new Exception("Non-vanilla commands cannot be executed in command blocks.");
++                }
++            }
++            // Moose end
++
+             if (contextchain != null) {
+                 Commands.executeCommandInContext(commandlistenerwrapper, (executioncontext) -> {
+                     ExecutionContext.queueInitialCommandExecution(executioncontext, s, contextchain, commandlistenerwrapper, CommandResultCallback.EMPTY);
+                 });
+             }
+         } catch (Exception exception) {
+-            if (throwCommandError) throw exception;
++            if (throwCommandError) throw new RuntimeException(exception);
+             MutableComponent ichatmutablecomponent = Component.literal(exception.getMessage() == null ? exception.getClass().getName() : exception.getMessage());
+ 
+             if (commandlistenerwrapper.getServer().isDebugging() || Commands.LOGGER.isDebugEnabled()) { // Paper - Debugging

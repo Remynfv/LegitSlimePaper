@@ -3,13 +3,10 @@ import io.papermc.paperweight.util.Git
 plugins {
     java
     `maven-publish`
+    id("io.github.goooler.shadow") version "8.1.7" apply false
+    id("io.papermc.paperweight.patcher") version "1.7.1"
     id("org.kordamp.gradle.profiles") version "0.47.0"
-
-    // Nothing special about this, just keep it up to date
-    id("com.github.johnrengelman.shadow") version "8.1.1" apply false
-
-    // In general, keep this version in sync with upstream. Sometimes a newer version than upstream might work, but an older version is extremely likely to break.
-    id("io.papermc.paperweight.patcher") version "1.5.11"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 val paperMavenPublicUrl = "https://repo.papermc.io/repository/maven-public/"
@@ -21,27 +18,38 @@ repositories {
     }
 }
 
-dependencies {
-    remapper("net.fabricmc:tiny-remapper:0.8.10:fat") // Must be kept in sync with upstream
-    decompiler("net.minecraftforge:forgeflower:2.0.627.2") // Must be kept in sync with upstream
-    paperclip("io.papermc:paperclip:3.0.3") // You probably want this to be kept in sync with upstream
-}
-
 allprojects {
     apply(plugin = "java")
     apply(plugin = "maven-publish")
 
     java {
         toolchain {
-            languageVersion = JavaLanguageVersion.of(17)
+            languageVersion = JavaLanguageVersion.of(21)
         }
     }
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+
+        maven("https://repo.papermc.io/repository/maven-public/")
+        maven("https://repo.codemc.io/repository/nms/")
+        maven("https://repo.rapture.pw/repository/maven-releases/")
+        maven("https://repo.glaremasters.me/repository/concuncan/")
+        maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+    }
+}
+
+dependencies {
+    remapper("net.fabricmc:tiny-remapper:0.10.1:fat") // Must be kept in sync with upstream
+    decompiler("org.vineflower:vineflower:1.10.1") // Must be kept in sync with upstream
+    paperclip("io.papermc:paperclip:3.0.3") // You probably want this to be kept in sync with upstream
 }
 
 subprojects {
     tasks.withType<JavaCompile> {
         options.encoding = Charsets.UTF_8.name()
-        options.release = 17
+        options.release = 21
     }
     tasks.withType<Javadoc> {
         options.encoding = Charsets.UTF_8.name()
@@ -53,87 +61,22 @@ subprojects {
     repositories {
         mavenCentral()
         maven(paperMavenPublicUrl)
-        maven("https://repo.infernalsuite.com/repository/maven-snapshots/")
-        maven("https://repo.rapture.pw/repository/maven-releases/")
     }
 }
-
-//paperweight {
-//    serverProject = project(":legitslimepaper-server")
-//
-//    remapRepo = paperMavenPublicUrl
-//    decompileRepo = paperMavenPublicUrl
-//
-//    usePaperUpstream(providers.gradleProperty("advancedslimepaperRef")) {
-//        withPaperPatcher {
-//            apiPatchDir = layout.projectDirectory.dir("patches/api")
-//            apiOutputDir = layout.projectDirectory.dir("legitslimepaper-api")
-//
-//            serverPatchDir = layout.projectDirectory.dir("patches/server")
-//            serverOutputDir = layout.projectDirectory.dir("legitslimepaper-server")
-//
-//        }
-//        patchTasks.register("generatedApi") {
-//            isBareDirectory = true
-//            upstreamDirPath = "paper-api-generator/generated"
-//            patchDir = layout.projectDirectory.dir("patches/generatedApi")
-//            outputDir = layout.projectDirectory.dir("paper-api-generator/generated")
-//        }
-//    }
-//}
-
-//paperweight {
-//    serverProject.set(project(":legitslimepaper-server"))
-//
-//    remapRepo.set(paperMavenPublicUrl)
-//    decompileRepo.set(paperMavenPublicUrl)
-//
-//    useStandardUpstream("slimeworldmanager") {
-//        url.set(github("infernalsuite", "advancedslimepaper"))
-//        ref.set(providers.gradleProperty("advancedslimepaperRef"))
-//
-//        patchTasks.register("core") {
-//            isBareDirectory = true
-//            upstreamDirPath = "core"
-//            patchDir = layout.projectDirectory.dir("patches/core")
-//            outputDir = layout.projectDirectory.dir("core")
-//        }
-//
-//        patchTasks.register("aswmApi") {
-//            isBareDirectory = true
-//            upstreamDirPath = "api"
-//            patchDir = layout.projectDirectory.dir("patches/aswmApi")
-//            outputDir = layout.projectDirectory.dir("aswmApi")
-//        }
-//
-//        withStandardPatcher {
-//            apiSourceDirPath = "slimeworldmanager-api"
-//            serverSourceDirPath = "slimeworldmanager-server"
-//
-//
-//            buildDataDir
-//            apiPatchDir = layout.projectDirectory.dir("patches/api")
-//            apiOutputDir = layout.projectDirectory.dir("legitslimepaper-api")
-//
-//            serverPatchDir = layout.projectDirectory.dir("patches/server")
-//            serverOutputDir = layout.projectDirectory.dir("legitslimepaper-server")
-//        }
-//    }
-//}
 
 val paperDir = layout.projectDirectory.dir("AdvancedSlimePaper")
 val initSubmodules by tasks.registering {
     outputs.upToDateWhen { false }
     doLast {
-        Git(layout.projectDirectory)("submodule", "update", "--init").executeOut()
+        Git(layout.projectDirectory)("submodule", "update", "--init", "--remote").executeOut()
     }
 }
 
 paperweight {
     serverProject = project(":legitslimepaper-server")
 
-    remapRepo = paperMavenPublicUrl
-    decompileRepo = paperMavenPublicUrl
+    remapRepo.set(paperMavenPublicUrl)
+    decompileRepo.set(paperMavenPublicUrl)
 
     upstreams {
         register("slimeworldmanager") {
@@ -157,12 +100,12 @@ paperweight {
                     outputDir = layout.projectDirectory.dir("legitslimepaper-server")
                     importMcDev = true
                 }
-//                register("generatedApi") {
-//                    isBareDirectory = true
-//                    upstreamDir = paperDir.dir("paper-api-generator/generated")
-//                    patchDir = layout.projectDirectory.dir("patches/generatedApi")
-//                    outputDir = layout.projectDirectory.dir("paper-api-generator/generated")
-//                }
+                register("generatedApi") {
+                    isBareDirectory = true
+                    upstreamDir = paperDir.dir("paper-api-generator/generated")
+                    patchDir = layout.projectDirectory.dir("patches/generatedApi")
+                    outputDir = layout.projectDirectory.dir("paper-api-generator/generated")
+                }
                 register("core") {
                     isBareDirectory = true
                     upstreamDir = paperDir.dir("core")
