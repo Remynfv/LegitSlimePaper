@@ -47,6 +47,19 @@ index 316d03791a97af50f882c0271cbacf3d2a7af5b3..aaeeb2920d44356820d0708d4830aa4a
      mainClass.set("org.bukkit.craftbukkit.Main")
      standardInput = System.`in`
      workingDir = rootProject.layout.projectDirectory
+diff --git a/src/main/java/io/papermc/paper/ServerBuildInfoImpl.java b/src/main/java/io/papermc/paper/ServerBuildInfoImpl.java
+index 2d6b062c4a3cf682d8e4cdbb7b7c84a7699285f2..6f393841509f599b286ca1692cb314da087b994f 100644
+--- a/src/main/java/io/papermc/paper/ServerBuildInfoImpl.java
++++ b/src/main/java/io/papermc/paper/ServerBuildInfoImpl.java
+@@ -31,7 +31,7 @@ public record ServerBuildInfoImpl(
+     private static final String ATTRIBUTE_GIT_COMMIT = "Git-Commit";
+ 
+     private static final String BRAND_PAPER_NAME = "Paper";
+-    private static final String BRAND_ADVANCED_SLIME_PAPER_NAME = "Paper";
++    private static final String BRAND_ADVANCED_SLIME_PAPER_NAME = "LegitSlimePaper";
+ 
+     private static final String BUILD_DEV = "DEV";
+ 
 diff --git a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java b/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
 index 29e29fb2228f08dff3edd8bf651220b83b16ed7b..d0473ffb840c8668719f8b6e3200db615c4a3277 100644
 --- a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
