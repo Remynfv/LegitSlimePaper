@@ -7,10 +7,23 @@ Filters clickEvents whenever a Style class is created. This uses a lot of iterat
 runs when there is a runCommand clickEvent. The performance impact should be minimal.
 
 diff --git a/src/main/java/net/minecraft/network/chat/Style.java b/src/main/java/net/minecraft/network/chat/Style.java
-index 321dd660a6d7df821d79f414f68911b45dc05f87..bc1959d821d629e7083c4a7e4562bcb2441f00ab 100644
+index 321dd660a6d7df821d79f414f68911b45dc05f87..61300a5696bd1259f6849ded1db390a54319df85 100644
 --- a/src/main/java/net/minecraft/network/chat/Style.java
 +++ b/src/main/java/net/minecraft/network/chat/Style.java
-@@ -11,6 +11,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
+@@ -1,5 +1,6 @@
+ package net.minecraft.network.chat;
+ 
++import com.mojang.brigadier.tree.CommandNode;
+ import com.mojang.serialization.Codec;
+ import com.mojang.serialization.MapCodec;
+ import com.mojang.serialization.codecs.RecordCodecBuilder;
+@@ -7,10 +8,13 @@ import java.util.Objects;
+ import java.util.Optional;
+ import javax.annotation.Nullable;
+ import net.minecraft.ChatFormatting;
++import net.minecraft.commands.CommandSourceStack;
++import net.minecraft.commands.Commands;
+ import net.minecraft.network.RegistryFriendlyByteBuf;
  import net.minecraft.network.codec.ByteBufCodecs;
  import net.minecraft.network.codec.StreamCodec;
  import net.minecraft.resources.ResourceLocation;
@@ -18,7 +31,7 @@ index 321dd660a6d7df821d79f414f68911b45dc05f87..bc1959d821d629e7083c4a7e4562bcb2
  
  public class Style {
      public static final Style EMPTY = new Style(null, null, null, null, null, null, null, null, null, null);
-@@ -81,7 +82,20 @@ public class Style {
+@@ -81,7 +85,20 @@ public class Style {
          this.underlined = underlined;
          this.strikethrough = strikethrough;
          this.obfuscated = obfuscated;
@@ -31,9 +44,9 @@ index 321dd660a6d7df821d79f414f68911b45dc05f87..bc1959d821d629e7083c4a7e4562bcb2
 +            cmd = cmd.split(" ", 2)[0];
 +            String finalCmd = cmd;
 +
-+//            if (MinecraftServer.getServer().getCommands().vanillaCommandNodes.stream().noneMatch((node) -> node.commandBlockAllowed && finalCmd.startsWith(node.getName()))) {
-+//                blackListedCommand = true;
-+//            }
++            if (Commands.vanillaCommands.getRoot().getChildren().stream().noneMatch((node) -> node.commandBlockAllowed && finalCmd.startsWith(node.getName()))) {
++                blackListedCommand = true;
++            }
 +        }
 +        this.clickEvent = blackListedCommand ? null : clickEvent;
 +        // Moose end
