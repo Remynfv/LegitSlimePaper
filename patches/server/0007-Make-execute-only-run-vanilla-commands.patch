@@ -7,7 +7,7 @@ Adds a new command dispatcher and root that clones the vanilla, non-blacklisted 
 /execute run can only use this root.
 
 diff --git a/src/main/java/net/minecraft/commands/Commands.java b/src/main/java/net/minecraft/commands/Commands.java
-index ab7e7fb6a1b51693822189d5f59313c94df92ddd..20f694ed769610a8651a41627ac640e4b683365a 100644
+index ab7e7fb6a1b51693822189d5f59313c94df92ddd..86967108efefd05849f9782fe51cede838e7bdf5 100644
 --- a/src/main/java/net/minecraft/commands/Commands.java
 +++ b/src/main/java/net/minecraft/commands/Commands.java
 @@ -1,6 +1,7 @@
@@ -22,7 +22,7 @@ index ab7e7fb6a1b51693822189d5f59313c94df92ddd..20f694ed769610a8651a41627ac640e4
      public static final int LEVEL_ADMINS = 3;
      public static final int LEVEL_OWNERS = 4;
      private final com.mojang.brigadier.CommandDispatcher<CommandSourceStack> dispatcher = new com.mojang.brigadier.CommandDispatcher();
-+    public static CommandDispatcher vanillaCommands = new CommandDispatcher<>(); // Moose
++    public static CommandDispatcher<CommandSourceStack> vanillaCommands = new CommandDispatcher<>(); // Moose
  
      public Commands(Commands.CommandSelection environment, CommandBuildContext commandRegistryAccess) {
          // Paper
@@ -42,15 +42,12 @@ index ab7e7fb6a1b51693822189d5f59313c94df92ddd..20f694ed769610a8651a41627ac640e4
          // Paper start - Vanilla command permission fixes
          for (final CommandNode<CommandSourceStack> node : this.dispatcher.getRoot().getChildren()) {
 diff --git a/src/main/java/net/minecraft/server/commands/ExecuteCommand.java b/src/main/java/net/minecraft/server/commands/ExecuteCommand.java
-index b4c21996550da123d9e0f46e0a7ef67eb8f4ff76..1852651485223c796d20afe02e85adbb4d25eb82 100644
+index b4c21996550da123d9e0f46e0a7ef67eb8f4ff76..df3dca13a01c25762a09836a481c35288a0dd8ff 100644
 --- a/src/main/java/net/minecraft/server/commands/ExecuteCommand.java
 +++ b/src/main/java/net/minecraft/server/commands/ExecuteCommand.java
-@@ -142,9 +142,9 @@ public class ExecuteCommand {
-     public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext commandRegistryAccess) {
-         LiteralCommandNode<CommandSourceStack> literalCommandNode = dispatcher.register(Commands.literal("execute").requires(source -> source.hasPermission(2)));
+@@ -144,7 +144,7 @@ public class ExecuteCommand {
          dispatcher.register(
--            Commands.literal("execute")
-+            (LiteralArgumentBuilder<CommandSourceStack>) Commands.literal("execute") // Moose - Add cast, idk why it wants this.
+             Commands.literal("execute")
                  .requires(source -> source.hasPermission(2))
 -                .then(Commands.literal("run").redirect(dispatcher.getRoot()))
 +                .then(Commands.literal("run").redirect(Commands.vanillaCommands.getRoot())) // Moose - Only run vanilla commands
