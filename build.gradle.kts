@@ -69,6 +69,7 @@ val initSubmodules by tasks.registering {
     outputs.upToDateWhen { false }
     doLast {
         Git(layout.projectDirectory)("submodule", "update", "--init", "--remote").executeOut()
+        Git(paperDir)("checkout", providers.gradleProperty("advancedslimepaperRef").getOrElse("HEAD") ).executeOut()
     }
 }
 
