@@ -1,5 +1,7 @@
 # LegitSlimePaper - An AdvancedSlimePaper fork with command related features needed for the Legitimoose server.
 
+# Current Working Method to build LegitSlimePaper[(Click Me)](https://github.com/CosmosCraftOfficial/LegitSlimePaper/blob/master/LegitSlimePaperBuild.sh)
+
 This is an example project, showcasing how to setup a fork of Paper (or any other fork using paperweight), using paperweight.
 
 The files of most interest are
