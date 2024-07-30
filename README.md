@@ -33,6 +33,16 @@ runReobf - Spin up a test server from the reobfJar output jar
 runShadow - Spin up a test server from the shadowJar archiveFile
 ```
 
+# `Process finished with exit code 128`?
+This error happens because the default Windows path limit is 255 characters. Change the following key in the [registry](https://en.wikipedia.org/wiki/Windows_Registry) to fix it:
+```
+HKLM\SYSTEM\CurrentControlSet\Control\FileSystem\LongPathsEnabled - Set to 1
+```
+Also make sure to also change the path limit in git:
+```
+git config --system core.longpaths true
+```
+
 ## Branches
 
 Each branch of this project represents an example:
