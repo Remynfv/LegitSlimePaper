@@ -34,11 +34,11 @@ runShadow - Spin up a test server from the shadowJar archiveFile
 ```
 
 # `Process finished with exit code 128`?
-This error happens because the default Windows path limit is 255 characters. Change the following key in the [registry](https://en.wikipedia.org/wiki/Windows_Registry) to fix it:
+This error occurs because the default Windows path limit is 255 characters. There cannot be paths longer than 255 characters, which is obviously bad, especially if you have many nested folders. Change the following key in the [Windows Registry](https://en.wikipedia.org/wiki/Windows_Registry) to fix it:
 ```
 HKLM\SYSTEM\CurrentControlSet\Control\FileSystem\LongPathsEnabled - Set to 1
 ```
-Make sure to also change the path limit in git:
+Make sure to also allow long paths in git:
 ```
 git config --system core.longpaths true
 ```
