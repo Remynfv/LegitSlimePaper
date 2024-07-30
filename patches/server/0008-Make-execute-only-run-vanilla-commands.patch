@@ -7,7 +7,7 @@ Adds a new command dispatcher and root that clones the vanilla, non-blacklisted 
 /execute run can only use this root.
 
 diff --git a/src/main/java/net/minecraft/commands/Commands.java b/src/main/java/net/minecraft/commands/Commands.java
-index 476914d5448799c5174956e0b8b4b534af235862..d2450a4d201f3f653ccf46aa04901ece274eb6aa 100644
+index 476914d5448799c5174956e0b8b4b534af235862..c04d8867d340a8e353117f36784b2341577df006 100644
 --- a/src/main/java/net/minecraft/commands/Commands.java
 +++ b/src/main/java/net/minecraft/commands/Commands.java
 @@ -1,6 +1,7 @@
@@ -26,11 +26,12 @@ index 476914d5448799c5174956e0b8b4b534af235862..d2450a4d201f3f653ccf46aa04901ece
  
      public Commands(Commands.CommandSelection environment, CommandBuildContext commandRegistryAccess) {
          // Paper
-@@ -271,6 +273,14 @@ public class Commands {
+@@ -271,6 +273,15 @@ public class Commands {
  //            this.vanillaCommandNodes.add(node);
          }
          // Moose end
 +        // Moose start - Copy all the vanilla commands into a new root for use in /execute. Prevents plugin commands being run.
++        vanillaCommands.getRoot().clearAll(); // Moose - Allow reloading of RessourceOrId arguments (like in /loot command)
 +        for (CommandNode<CommandSourceStack> node : this.dispatcher.getRoot().getChildren()) {
 +            if (!node.commandBlockAllowed) {
 +                continue;
