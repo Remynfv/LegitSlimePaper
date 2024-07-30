@@ -38,7 +38,7 @@ This error happens because the default Windows path limit is 255 characters. Cha
 ```
 HKLM\SYSTEM\CurrentControlSet\Control\FileSystem\LongPathsEnabled - Set to 1
 ```
-Also make sure to also change the path limit in git:
+Make sure to also change the path limit in git:
 ```
 git config --system core.longpaths true
 ```
