@@ -6,7 +6,7 @@ Subject: [PATCH] Change tick command permission level
 This allows the tick command to be used by command blocks and functions.
 
 diff --git a/src/main/java/net/minecraft/server/commands/TickCommand.java b/src/main/java/net/minecraft/server/commands/TickCommand.java
-index 5ce845a9c..df4f4021b 100644
+index 5ce845a9cd84c355e2716dfcb0b62686c783c9f9..df4f4021b9510f45cfb9ad06c9feea57fd394e4e 100644
 --- a/src/main/java/net/minecraft/server/commands/TickCommand.java
 +++ b/src/main/java/net/minecraft/server/commands/TickCommand.java
 @@ -19,7 +19,7 @@ public class TickCommand {
