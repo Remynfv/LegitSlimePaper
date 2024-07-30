@@ -1,0 +1,32 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: PilkeySEK <PilkeySEK@gmx.de>
+Date: Tue, 30 Jul 2024 15:03:19 +0200
+Subject: [PATCH] Remove "flying is not enabled on this server" kick
+
+
+diff --git a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+index b9b3277c8ed94e0cd30b20b9c00a33eaad48e5ac..9af1720cbd7ecd41762aad3453ac9e879ae69cc8 100644
+--- a/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
++++ b/src/main/java/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+@@ -347,6 +347,8 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
+         this.player.absMoveTo(this.firstGoodX, this.firstGoodY, this.firstGoodZ, this.player.getYRot(), this.player.getXRot());
+         ++this.tickCount;
+         this.knownMovePacketCount = this.receivedMovePacketCount;
++        // Moose start
++/*
+         if (this.clientIsFloating && !this.player.isSleeping() && !this.player.isPassenger() && !this.player.isDeadOrDying()) {
+             if (++this.aboveGroundTickCount > this.getMaximumFlyingTicks(this.player)) {
+                 ServerGamePacketListenerImpl.LOGGER.warn("{} was kicked for floating too long!", this.player.getName().getString());
+@@ -357,6 +359,12 @@ public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl
+             this.clientIsFloating = false;
+             this.aboveGroundTickCount = 0;
+         }
++*/
++        if (!(this.clientIsFloating && !this.player.isSleeping() && !this.player.isPassenger() && !this.player.isDeadOrDying())) {
++            this.clientIsFloating = false;
++            this.aboveGroundTickCount = 0;
++        }
++        // Moose end
+ 
+         this.lastVehicle = this.player.getRootVehicle();
+         if (this.lastVehicle != this.player && this.lastVehicle.getControllingPassenger() == this.player) {
