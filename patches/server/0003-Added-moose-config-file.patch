@@ -129,7 +129,7 @@ index 0000000000000000000000000000000000000000..3730c2f902dd23a97df4d5d3b3cc57cf
 +}
 \ No newline at end of file
 diff --git a/src/main/java/net/minecraft/server/Main.java b/src/main/java/net/minecraft/server/Main.java
-index 5443013060b62e3bfcc51cddca96d1c0bc59fe72..33a21880b0ac547f804202f38ba124e97f6d4c4b 100644
+index 581bd217304e0f9e0b2113c335694805dfb4e2a1..60f6e117010553e2a13c07fda7d00694e9da6837 100644
 --- a/src/main/java/net/minecraft/server/Main.java
 +++ b/src/main/java/net/minecraft/server/Main.java
 @@ -1,5 +1,6 @@
@@ -139,7 +139,7 @@ index 5443013060b62e3bfcc51cddca96d1c0bc59fe72..33a21880b0ac547f804202f38ba124e9
  import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
  import com.mojang.datafixers.DataFixer;
  import com.mojang.logging.LogUtils;
-@@ -153,6 +154,9 @@ public class Main {
+@@ -154,6 +155,9 @@ public class Main {
                  return;
              }
  
@@ -150,7 +150,7 @@ index 5443013060b62e3bfcc51cddca96d1c0bc59fe72..33a21880b0ac547f804202f38ba124e9
              boolean eulaAgreed = Boolean.getBoolean( "com.mojang.eula.agree" );
              if ( eulaAgreed )
 diff --git a/src/main/java/org/bukkit/craftbukkit/Main.java b/src/main/java/org/bukkit/craftbukkit/Main.java
-index e02102280ed1dc300191d19bbca8f00e17701753..e0525746be95f7eced1e83c8da54c4886a383986 100644
+index c1e88c31910e96ef07cece05046c0b55e708b52d..5818762a0750c9bcd01a986b75886b2ee511ea1a 100644
 --- a/src/main/java/org/bukkit/craftbukkit/Main.java
 +++ b/src/main/java/org/bukkit/craftbukkit/Main.java
 @@ -183,6 +183,14 @@ public class Main {
