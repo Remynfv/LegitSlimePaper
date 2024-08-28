@@ -1,0 +1,48 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: PolishKrowa <45701824+Mrredstone5230@users.noreply.github.com>
+Date: Sat, 20 Jul 2024 12:47:30 -0400
+Subject: [PATCH] Prevent custom commands in functions
+
+This makes the function parser use the Commands.vanillaCommands dispatcher from a previous patch.
+
+diff --git a/src/main/java/net/minecraft/commands/functions/MacroFunction.java b/src/main/java/net/minecraft/commands/functions/MacroFunction.java
+index 3aac14b5ca7485d1852ca3527e2b009fa2d1c679..c7410453ada5332c064e99ed73f90feb049178a6 100644
+--- a/src/main/java/net/minecraft/commands/functions/MacroFunction.java
++++ b/src/main/java/net/minecraft/commands/functions/MacroFunction.java
+@@ -13,6 +13,7 @@ import java.util.List;
+ import java.util.Locale;
+ import javax.annotation.Nullable;
+ import net.minecraft.Util;
++import net.minecraft.commands.Commands; // Moose
+ import net.minecraft.commands.ExecutionCommandSource;
+ import net.minecraft.commands.FunctionInstantiationException;
+ import net.minecraft.commands.execution.UnboundEntryAction;
+@@ -50,6 +51,7 @@ public class MacroFunction<T extends ExecutionCommandSource<T>> implements Comma
+ 
+     @Override
+     public InstantiatedFunction<T> instantiate(@Nullable CompoundTag arguments, CommandDispatcher<T> dispatcher) throws FunctionInstantiationException {
++        dispatcher = (CommandDispatcher<T>) Commands.vanillaCommands; // Moose
+         if (arguments == null) {
+             throw new FunctionInstantiationException(Component.translatable("commands.function.error.missing_arguments", Component.translationArg(this.id())));
+         } else {
+diff --git a/src/main/java/net/minecraft/server/ServerFunctionLibrary.java b/src/main/java/net/minecraft/server/ServerFunctionLibrary.java
+index bae0d208b31aa0a6977c30f2f8484ab3c316bc71..4f571ff26239b0d064a5626d226ebb9f371c91cb 100644
+--- a/src/main/java/net/minecraft/server/ServerFunctionLibrary.java
++++ b/src/main/java/net/minecraft/server/ServerFunctionLibrary.java
+@@ -18,6 +18,7 @@ import java.util.concurrent.CompletionException;
+ import java.util.concurrent.Executor;
+ import net.minecraft.commands.CommandSource;
+ import net.minecraft.commands.CommandSourceStack;
++import net.minecraft.commands.Commands; // Moose
+ import net.minecraft.commands.functions.CommandFunction;
+ import net.minecraft.network.chat.CommonComponents;
+ import net.minecraft.resources.FileToIdConverter;
+@@ -88,7 +89,7 @@ public class ServerFunctionLibrary implements PreparableReloadListener {
+                         ResourceLocation resourceLocation2 = LISTER.fileToId(resourceLocation);
+                         map.put(resourceLocation2, CompletableFuture.supplyAsync(() -> {
+                             List<String> list = readLines(entry.getValue());
+-                            return CommandFunction.fromLines(resourceLocation2, this.dispatcher, commandSourceStack, list);
++                            return CommandFunction.fromLines(resourceLocation2, Commands.vanillaCommands, commandSourceStack, list); // Moose
+                         }, prepareExecutor));
+                     }
+ 
