@@ -1,5 +1,8 @@
 # How to contribute to LegitSlimePaper
 
+## Setting up your development environment
+Refer to [Paper/CONTRIBUTING.md](https://github.com/PaperMC/Paper/blob/master/CONTRIBUTING.md) for a great guide on how to set up your development environment and start coding.
+
 ## Found a bug?
 - If it's a security vulnerability or a dangerous exploit, **do not share it publicly in an issue!** Instead, create a new Ticket in the discord: [#support](https://discord.gg/PTW4JxZDPM) (also ping @legitimoose, depending on the severity of the exploit).
 - Ensure the issue has not already been reported by searching for it.
