@@ -9,7 +9,7 @@ When server commands are dispatched, check if running in a command block,
 and if it's not vanilla, act like it's not a valid command.
 
 diff --git a/src/main/java/com/mojang/brigadier/tree/CommandNode.java b/src/main/java/com/mojang/brigadier/tree/CommandNode.java
-index 03ce8a2abb6dceaa922dcce7f3adbc228bbde4bc..89602810e919a92fa7e771c1b443605afaa0c82d 100644
+index dc76fcf4c6cc6cd65ce117b1855c15ede60f30ab..06b0403caa3a4a826619ace4211405b4c3b9200d 100644
 --- a/src/main/java/com/mojang/brigadier/tree/CommandNode.java
 +++ b/src/main/java/com/mojang/brigadier/tree/CommandNode.java
 @@ -44,6 +44,7 @@ public abstract class CommandNode<S> implements Comparable<CommandNode<S>> {
@@ -21,7 +21,7 @@ index 03ce8a2abb6dceaa922dcce7f3adbc228bbde4bc..89602810e919a92fa7e771c1b443605a
      protected CommandNode(final Command<S> command, final Predicate<S> requirement, final CommandNode<S> redirect, final RedirectModifier<S> modifier, final boolean forks) {
          this.command = command;
 diff --git a/src/main/java/net/minecraft/commands/Commands.java b/src/main/java/net/minecraft/commands/Commands.java
-index 24086a82e1687cb1925398218b18c2384fa8f6e3..476914d5448799c5174956e0b8b4b534af235862 100644
+index 1d1e76de60e40224f5cb81893f9ee50fe987badb..564e7cdef5cc9c2c36bc5a5a6baf593d4d6607c9 100644
 --- a/src/main/java/net/minecraft/commands/Commands.java
 +++ b/src/main/java/net/minecraft/commands/Commands.java
 @@ -1,6 +1,7 @@
@@ -32,19 +32,18 @@ index 24086a82e1687cb1925398218b18c2384fa8f6e3..476914d5448799c5174956e0b8b4b534
  import com.mojang.brigadier.ParseResults;
  import com.mojang.brigadier.StringReader;
  import com.mojang.brigadier.arguments.ArgumentType;
-@@ -134,6 +135,7 @@ import net.minecraft.server.level.ServerPlayer;
- import net.minecraft.tags.TagKey;
- import net.minecraft.util.profiling.jfr.JvmProfiler;
- import net.minecraft.world.level.GameRules;
+@@ -72,6 +73,7 @@ import net.minecraft.server.commands.ForceLoadCommand;
+ import net.minecraft.server.commands.FunctionCommand;
+ import net.minecraft.server.commands.GameModeCommand;
+ import net.minecraft.server.commands.GameRuleCommand;
 +import net.minecraft.world.level.BaseCommandBlock;
- import org.slf4j.Logger;
- 
- // CraftBukkit start
-@@ -258,6 +260,18 @@ public class Commands {
+ import net.minecraft.server.commands.GiveCommand;
+ import net.minecraft.server.commands.HelpCommand;
+ import net.minecraft.server.commands.ItemCommands;
+@@ -256,6 +258,17 @@ public class Commands {
              PublishCommand.register(this.dispatcher);
          }
  
-+//        this.vanillaCommandNodes.addAll(this.dispatcher.getRoot().getChildren()); // Paper
 +        // Moose start - Special boolean to track command block allowed commands (allowed to be ran by command blocks and click events).
 +        for (CommandNode<CommandSourceStack> node : this.dispatcher.getRoot().getChildren()) {
 +            String cmd = node.getName();
@@ -59,7 +58,7 @@ index 24086a82e1687cb1925398218b18c2384fa8f6e3..476914d5448799c5174956e0b8b4b534
          // Paper start - Vanilla command permission fixes
          for (final CommandNode<CommandSourceStack> node : this.dispatcher.getRoot().getChildren()) {
              if (node.getRequirement() == com.mojang.brigadier.builder.ArgumentBuilder.<CommandSourceStack>defaultRequirement()) {
-@@ -345,13 +359,21 @@ public class Commands {
+@@ -346,13 +359,21 @@ public class Commands {
          ContextChain contextchain = this.finishParsing(parseresults, s, commandlistenerwrapper, label); // CraftBukkit // Paper - Add UnknownCommandEvent
  
          try {
@@ -81,4 +80,4 @@ index 24086a82e1687cb1925398218b18c2384fa8f6e3..476914d5448799c5174956e0b8b4b534
 +            if (throwCommandError) throw new RuntimeException(exception);
              MutableComponent ichatmutablecomponent = Component.literal(exception.getMessage() == null ? exception.getClass().getName() : exception.getMessage());
  
-             if (commandlistenerwrapper.getServer().isDebugging() || Commands.LOGGER.isDebugEnabled()) { // Paper - Debugging
+             Commands.LOGGER.error("Command exception: /{}", s, exception); // Paper - always show execution exception in console log

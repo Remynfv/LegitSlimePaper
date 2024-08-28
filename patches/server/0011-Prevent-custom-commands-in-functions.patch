@@ -26,7 +26,7 @@ index 3aac14b5ca7485d1852ca3527e2b009fa2d1c679..c7410453ada5332c064e99ed73f90feb
              throw new FunctionInstantiationException(Component.translatable("commands.function.error.missing_arguments", Component.translationArg(this.id())));
          } else {
 diff --git a/src/main/java/net/minecraft/server/ServerFunctionLibrary.java b/src/main/java/net/minecraft/server/ServerFunctionLibrary.java
-index bae0d208b31aa0a6977c30f2f8484ab3c316bc71..4f571ff26239b0d064a5626d226ebb9f371c91cb 100644
+index 8ae2ca2435d84fee930d2931e45ad440245cbe0f..986ec596f9131f346d1a75240d759038ee9686ee 100644
 --- a/src/main/java/net/minecraft/server/ServerFunctionLibrary.java
 +++ b/src/main/java/net/minecraft/server/ServerFunctionLibrary.java
 @@ -18,6 +18,7 @@ import java.util.concurrent.CompletionException;
@@ -35,9 +35,9 @@ index bae0d208b31aa0a6977c30f2f8484ab3c316bc71..4f571ff26239b0d064a5626d226ebb9f
  import net.minecraft.commands.CommandSourceStack;
 +import net.minecraft.commands.Commands; // Moose
  import net.minecraft.commands.functions.CommandFunction;
- import net.minecraft.network.chat.CommonComponents;
- import net.minecraft.resources.FileToIdConverter;
-@@ -88,7 +89,7 @@ public class ServerFunctionLibrary implements PreparableReloadListener {
+ import net.minecraft.core.Registry;
+ import net.minecraft.core.registries.Registries;
+@@ -94,7 +95,7 @@ public class ServerFunctionLibrary implements PreparableReloadListener {
                          ResourceLocation resourceLocation2 = LISTER.fileToId(resourceLocation);
                          map.put(resourceLocation2, CompletableFuture.supplyAsync(() -> {
                              List<String> list = readLines(entry.getValue());
