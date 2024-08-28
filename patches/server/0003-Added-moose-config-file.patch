@@ -6,10 +6,10 @@ Subject: [PATCH] Added moose config file
 
 diff --git a/src/main/java/com/legitimoose/lsp/MooseConfig.java b/src/main/java/com/legitimoose/lsp/MooseConfig.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..bea1c2a169e85808977356e36db9eb32fed59894
+index 0000000000000000000000000000000000000000..3730c2f902dd23a97df4d5d3b3cc57cf8cb13ef1
 --- /dev/null
 +++ b/src/main/java/com/legitimoose/lsp/MooseConfig.java
-@@ -0,0 +1,116 @@
+@@ -0,0 +1,117 @@
 +package com.legitimoose.lsp;
 +
 +import com.google.common.base.Throwables;
@@ -19,6 +19,7 @@ index 0000000000000000000000000000000000000000..bea1c2a169e85808977356e36db9eb32
 +import java.lang.reflect.InvocationTargetException;
 +import java.lang.reflect.Method;
 +import java.lang.reflect.Modifier;
++import java.util.ArrayList;
 +import java.util.List;
 +
 +import org.bukkit.configuration.InvalidConfigurationException;
@@ -112,14 +113,14 @@ index 0000000000000000000000000000000000000000..bea1c2a169e85808977356e36db9eb32
 +//    ========================================================================
 +
 +
-+    public static List<String> blacklistedVanillaCommands;
++    public static List<String> blacklistedVanillaCommands = new ArrayList<>();
 +    private static void blacklistedVanillaCommands() {
 +        MooseConfig.blacklistedVanillaCommands = MooseConfig.getList("blacklisted-vanilla-commands-in-cmd-blocks", List.of(
 +                "stop", "kick", "op", "deop", "ban", "ban-ip", "pardon", "pardon-ip", "reload", "jfr", "debug", "whitelist", "perf", "save-all", "save-on", "save-off", "setidletimeout"
 +        ));
 +    }
 +
-+    public static List<String> allowedExtraCommands;
++    public static List<String> allowedExtraCommands = new ArrayList<>();
 +    private static void allowedExtraCommands() {
 +        MooseConfig.allowedExtraCommands = MooseConfig.getList("allowed-extra-commands-in-cmd-blocks", List.of(
 +
