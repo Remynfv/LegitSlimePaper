@@ -3,7 +3,7 @@ import io.papermc.paperweight.util.Git
 plugins {
     java
     `maven-publish`
-    id("io.github.goooler.shadow") version "8.1.7" apply false
+    id("com.gradleup.shadow") version "8.3.0" apply false
     id("io.papermc.paperweight.patcher") version "1.7.1"
     id("org.kordamp.gradle.profiles") version "0.47.0"
     id("com.github.johnrengelman.shadow") version "8.1.1"
@@ -41,7 +41,7 @@ allprojects {
 }
 
 dependencies {
-    remapper("net.fabricmc:tiny-remapper:0.10.1:fat") // Must be kept in sync with upstream
+    remapper("net.fabricmc:tiny-remapper:0.10.3:fat") // Must be kept in sync with upstream
     decompiler("org.vineflower:vineflower:1.10.1") // Must be kept in sync with upstream
     paperclip("io.papermc:paperclip:3.0.3") // You probably want this to be kept in sync with upstream
 }

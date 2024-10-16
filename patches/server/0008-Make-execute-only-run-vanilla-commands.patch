@@ -7,7 +7,7 @@ Adds a new command dispatcher and root that clones the vanilla, non-blacklisted 
 /execute run can only use this root.
 
 diff --git a/src/main/java/net/minecraft/commands/Commands.java b/src/main/java/net/minecraft/commands/Commands.java
-index 476914d5448799c5174956e0b8b4b534af235862..c04d8867d340a8e353117f36784b2341577df006 100644
+index 564e7cdef5cc9c2c36bc5a5a6baf593d4d6607c9..8ffa19484b31ead5508f07f642a3f9d1438d1f8a 100644
 --- a/src/main/java/net/minecraft/commands/Commands.java
 +++ b/src/main/java/net/minecraft/commands/Commands.java
 @@ -1,6 +1,7 @@
@@ -18,7 +18,7 @@ index 476914d5448799c5174956e0b8b4b534af235862..c04d8867d340a8e353117f36784b2341
  import com.legitimoose.lsp.MooseConfig; // Moose
  import com.mojang.brigadier.ParseResults;
  import com.mojang.brigadier.StringReader;
-@@ -156,6 +157,7 @@ public class Commands {
+@@ -155,6 +156,7 @@ public class Commands {
      public static final int LEVEL_ADMINS = 3;
      public static final int LEVEL_OWNERS = 4;
      private final com.mojang.brigadier.CommandDispatcher<CommandSourceStack> dispatcher = new com.mojang.brigadier.CommandDispatcher();
@@ -26,7 +26,7 @@ index 476914d5448799c5174956e0b8b4b534af235862..c04d8867d340a8e353117f36784b2341
  
      public Commands(Commands.CommandSelection environment, CommandBuildContext commandRegistryAccess) {
          // Paper
-@@ -271,6 +273,15 @@ public class Commands {
+@@ -268,6 +270,15 @@ public class Commands {
  //            this.vanillaCommandNodes.add(node);
          }
          // Moose end
@@ -43,7 +43,7 @@ index 476914d5448799c5174956e0b8b4b534af235862..c04d8867d340a8e353117f36784b2341
          // Paper start - Vanilla command permission fixes
          for (final CommandNode<CommandSourceStack> node : this.dispatcher.getRoot().getChildren()) {
 diff --git a/src/main/java/net/minecraft/server/commands/ExecuteCommand.java b/src/main/java/net/minecraft/server/commands/ExecuteCommand.java
-index b4c21996550da123d9e0f46e0a7ef67eb8f4ff76..df3dca13a01c25762a09836a481c35288a0dd8ff 100644
+index 4fdf1e72ee4cee40cd780e22b5b7d3fa734f5438..21e6b44c98c108fcde12bc6ac449c5b4bb33298d 100644
 --- a/src/main/java/net/minecraft/server/commands/ExecuteCommand.java
 +++ b/src/main/java/net/minecraft/server/commands/ExecuteCommand.java
 @@ -144,7 +144,7 @@ public class ExecuteCommand {
