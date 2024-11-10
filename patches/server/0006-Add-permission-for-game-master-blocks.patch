@@ -5,10 +5,10 @@ Subject: [PATCH] Add permission for game master blocks
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/player/Player.java b/src/main/java/net/minecraft/world/entity/player/Player.java
-index 09bcbc0ae36e4e69fee87a7e0c49acf496117a39..b7c9aa4fefaddea30a2f8b531c1489565140e7df 100644
+index 61d412c4f1ebd55661cc3f0260468e3ac0efe0bb..573143c7aa97861cb66640e1c3748ef1a9126fac 100644
 --- a/src/main/java/net/minecraft/world/entity/player/Player.java
 +++ b/src/main/java/net/minecraft/world/entity/player/Player.java
-@@ -2274,7 +2274,7 @@ public abstract class Player extends LivingEntity {
+@@ -2213,7 +2213,7 @@ public abstract class Player extends LivingEntity {
      }
  
      public boolean canUseGameMasterBlocks() {
@@ -16,4 +16,4 @@ index 09bcbc0ae36e4e69fee87a7e0c49acf496117a39..b7c9aa4fefaddea30a2f8b531c148956
 +        return this.abilities.instabuild && (this.getPermissionLevel() >= 2  || this.getBukkitEntity().hasPermission("minecraft.commandblock")); // Moose - Add permission for interacting with GameMasterBlocks
      }
  
-     @Override
+     protected int getPermissionLevel() {

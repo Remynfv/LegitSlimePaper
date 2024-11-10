@@ -5,20 +5,20 @@ Subject: [PATCH] Allow negative explosion radius
 
 Co-authored-by: Nico314159 <nicolino.will@gmail.com>
 
-diff --git a/src/main/java/net/minecraft/world/level/Explosion.java b/src/main/java/net/minecraft/world/level/Explosion.java
-index ad57bf49476192dea6a7367cbd0ad3f11e142e1b..c9c7d11fb89a2b59865a48e6e16a188fe1f8986b 100644
---- a/src/main/java/net/minecraft/world/level/Explosion.java
-+++ b/src/main/java/net/minecraft/world/level/Explosion.java
-@@ -340,7 +340,7 @@ public class Explosion {
-         this.hitPlayers = Maps.newHashMap();
+diff --git a/src/main/java/net/minecraft/world/level/ServerExplosion.java b/src/main/java/net/minecraft/world/level/ServerExplosion.java
+index bbbd451ff184be8fa13bd93d53c89a9502f9951a..9114fc813ebe588ce8261e66e8353f8904fb741f 100644
+--- a/src/main/java/net/minecraft/world/level/ServerExplosion.java
++++ b/src/main/java/net/minecraft/world/level/ServerExplosion.java
+@@ -311,7 +311,7 @@ public class ServerExplosion implements Explosion {
+     public ServerExplosion(ServerLevel world, @Nullable Entity entity, @Nullable DamageSource damageSource, @Nullable ExplosionDamageCalculator behavior, Vec3 pos, float power, boolean createFire, Explosion.BlockInteraction destructionType) {
          this.level = world;
          this.source = entity;
 -        this.radius = (float) Math.max(power, 0.0); // CraftBukkit - clamp bad values
 +        this.radius = (float) power; // Moose - Remove value clamp
-         this.x = x;
-         this.y = y;
-         this.z = z;
-@@ -402,11 +402,7 @@ public class Explosion {
+         this.center = pos;
+         this.fire = createFire;
+         this.blockInteraction = destructionType;
+@@ -665,11 +665,7 @@ public class ServerExplosion implements Explosion {
      }
  
      public void explode() {
@@ -28,6 +28,6 @@ index ad57bf49476192dea6a7367cbd0ad3f11e142e1b..c9c7d11fb89a2b59865a48e6e16a188f
 -        }
 -        // CraftBukkit end
 +        // Moose - Remove minimum radius
-         this.level.gameEvent(this.source, (Holder) GameEvent.EXPLODE, new Vec3(this.x, this.y, this.z));
- 
          // Paper start - collision optimisations
+         this.blockCache = new it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap<>();
+         this.chunkPosCache = new long[CHUNK_CACHE_WIDTH * CHUNK_CACHE_WIDTH];

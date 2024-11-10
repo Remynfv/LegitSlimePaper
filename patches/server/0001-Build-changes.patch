@@ -5,7 +5,7 @@ Subject: [PATCH] Build changes
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 2e181cf2997ab6abd3efaaa680eb478efa864422..5e1e9be6866e65ccc47dc3fcfca00564d823e338 100644
+index c323b9a523593dcfa4a5ec012c9c65887fcf3dce..161d9f6b2e8eed84202748873dc7f2159d430a52 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
 @@ -15,7 +15,7 @@ val alsoShade: Configuration by configurations.creating
@@ -17,7 +17,7 @@ index 2e181cf2997ab6abd3efaaa680eb478efa864422..5e1e9be6866e65ccc47dc3fcfca00564
      implementation(project(":core"))
      implementation("commons-io:commons-io:2.11.0")
      // ASWM end
-@@ -89,14 +89,14 @@ tasks.jar {
+@@ -90,14 +90,14 @@ tasks.jar {
          val gitBranch = git("rev-parse", "--abbrev-ref", "HEAD").getText().trim() // Paper
          attributes(
              "Main-Class" to "org.bukkit.craftbukkit.Main",
@@ -37,7 +37,7 @@ index 2e181cf2997ab6abd3efaaa680eb478efa864422..5e1e9be6866e65ccc47dc3fcfca00564
              "Build-Number" to (build ?: ""),
              "Build-Time" to Instant.now().toString(),
              "Git-Branch" to gitBranch, // Paper
-@@ -153,7 +153,7 @@ fun TaskContainer.registerRunTask(
+@@ -158,7 +158,7 @@ fun TaskContainer.registerRunTask(
      name: String,
      block: JavaExec.() -> Unit
  ): TaskProvider<JavaExec> = register<JavaExec>(name) {

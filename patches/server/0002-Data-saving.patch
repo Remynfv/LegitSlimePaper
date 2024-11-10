@@ -10,7 +10,7 @@ NOTE: Ideally we'd use an access transformer, but they seem to be broken in fork
 # public net.minecraft.server.MinecraftServer readScoreboard(Lnet/minecraft/world/level/storage/DimensionDataStorage;)V
 
 diff --git a/src/main/java/com/infernalsuite/aswm/SlimeNMSBridgeImpl.java b/src/main/java/com/infernalsuite/aswm/SlimeNMSBridgeImpl.java
-index 87b6ee19fd165bde2db3a57545c58251dc6bad22..658f8d9a1f70a710d98bc7f7ea506188b5b21af4 100644
+index 7b65a8d9137cd160b1c69dfafe70c693e9cfd508..51d0b6f382d375e3c823f68b4b11305d31868f56 100644
 --- a/src/main/java/com/infernalsuite/aswm/SlimeNMSBridgeImpl.java
 +++ b/src/main/java/com/infernalsuite/aswm/SlimeNMSBridgeImpl.java
 @@ -100,6 +100,7 @@ public class SlimeNMSBridgeImpl implements SlimeNMSBridge {
@@ -29,10 +29,10 @@ index 87b6ee19fd165bde2db3a57545c58251dc6bad22..658f8d9a1f70a710d98bc7f7ea506188
 \ No newline at end of file
 +}
 diff --git a/src/main/java/com/infernalsuite/aswm/level/SlimeLevelInstance.java b/src/main/java/com/infernalsuite/aswm/level/SlimeLevelInstance.java
-index 187336ecaa4262e3f081a88702031b17c6037091..c3fddd09c239f1560bcd9c4b3b4c65149160423e 100644
+index acb6ea84fbc40a6907edb237b834feeb66075af8..b9c4d59fe54821aec863147225c8b103451c99c0 100644
 --- a/src/main/java/com/infernalsuite/aswm/level/SlimeLevelInstance.java
 +++ b/src/main/java/com/infernalsuite/aswm/level/SlimeLevelInstance.java
-@@ -53,16 +53,10 @@ public class SlimeLevelInstance extends ServerLevel {
+@@ -55,16 +55,10 @@ public class SlimeLevelInstance extends ServerLevel {
      public static LevelStorageSource CUSTOM_LEVEL_STORAGE;
  
      static {
@@ -53,7 +53,7 @@ index 187336ecaa4262e3f081a88702031b17c6037091..c3fddd09c239f1560bcd9c4b3b4c6514
      }
  
      private static final ExecutorService WORLD_SAVER_SERVICE = Executors.newFixedThreadPool(4, new ThreadFactoryBuilder()
-@@ -77,8 +71,8 @@ public class SlimeLevelInstance extends ServerLevel {
+@@ -79,8 +73,8 @@ public class SlimeLevelInstance extends ServerLevel {
                                org.bukkit.World.Environment environment) throws IOException {
  
          super(slimeBootstrap, MinecraftServer.getServer(), MinecraftServer.getServer().executor,
@@ -61,29 +61,38 @@ index 187336ecaa4262e3f081a88702031b17c6037091..c3fddd09c239f1560bcd9c4b3b4c6514
 -                primaryLevelData, worldKey, worldDimension,
 +            CUSTOM_LEVEL_STORAGE.createAccess("dat_files", dimensionKey), // Moose
 +            primaryLevelData, worldKey, worldDimension,
-                 MinecraftServer.getServer().progressListenerFactory.create(11), false, null, 0,
-                 Collections.emptyList(), true, environment, null, null);
+                 MinecraftServer.getServer().progressListenerFactory.create(11), false, 0,
+                 Collections.emptyList(), true, null, environment, null, null);
          this.slimeInstance = new SlimeInMemoryWorld(slimeBootstrap, this);
-@@ -117,6 +111,7 @@ public class SlimeLevelInstance extends ServerLevel {
+@@ -119,6 +113,7 @@ public class SlimeLevelInstance extends ServerLevel {
                  Bukkit.getPluginManager().callEvent(new WorldSaveEvent(getWorld()));
  
                  //this.getChunkSource().save(forceSave);
-+                this.getDataStorage().save(false); // Moose
++                this.getDataStorage().scheduleSave().join(); // Moose - Save all chunks synchronously
                  this.serverLevelData.setWorldBorder(this.getWorldBorder().createSettings());
                  this.serverLevelData.setCustomBossEvents(MinecraftServer.getServer().getCustomBossEvents().save(MinecraftServer.getServer().registryAccess()));
  
-@@ -205,4 +200,4 @@ public class SlimeLevelInstance extends ServerLevel {
-     //        this.slimeInstance.unload(chunk);
-     //        super.unload(chunk);
-     //    }
--}
+@@ -202,9 +197,9 @@ public class SlimeLevelInstance extends ServerLevel {
+         propertyMap.setValue(SlimeProperties.SPAWN_YAW, angle);
+     }
+ 
+-    @Override
+-    public void unload(LevelChunk chunk) {
+-        this.slimeInstance.unload(chunk);
+-        super.unload(chunk);
+-    }
++    //    @Override
++    //    public void unload(LevelChunk chunk) {
++    //        this.slimeInstance.unload(chunk);
++    //        super.unload(chunk);
++    //    }
+ }
 \ No newline at end of file
-+}
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 4434022a6235db9cb453596df7d2aef7bf011363..147b0b33cfc7dfc052f304af8a83185effebf7da 100644
+index 52c6fd303e150377d0864139065219bda6a4f97f..75d74e3733d957ef3e9981ca82f181dd4edf74fa 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -499,7 +499,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -512,7 +512,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          this.paperConfigurations = services.paperConfigurations(); // Paper - add paper configuration files
      }
  

@@ -7,7 +7,7 @@ Adds a new command dispatcher and root that clones the vanilla, non-blacklisted 
 /execute run can only use this root.
 
 diff --git a/src/main/java/net/minecraft/commands/Commands.java b/src/main/java/net/minecraft/commands/Commands.java
-index 564e7cdef5cc9c2c36bc5a5a6baf593d4d6607c9..8ffa19484b31ead5508f07f642a3f9d1438d1f8a 100644
+index d1c2e1ea0aca8d455e5b784e593dfac1b5307918..fc3f7a428a3b7dc9e9190369782a7fa461f1b8eb 100644
 --- a/src/main/java/net/minecraft/commands/Commands.java
 +++ b/src/main/java/net/minecraft/commands/Commands.java
 @@ -1,6 +1,7 @@
@@ -18,7 +18,7 @@ index 564e7cdef5cc9c2c36bc5a5a6baf593d4d6607c9..8ffa19484b31ead5508f07f642a3f9d1
  import com.legitimoose.lsp.MooseConfig; // Moose
  import com.mojang.brigadier.ParseResults;
  import com.mojang.brigadier.StringReader;
-@@ -155,6 +156,7 @@ public class Commands {
+@@ -159,6 +160,7 @@ public class Commands {
      public static final int LEVEL_ADMINS = 3;
      public static final int LEVEL_OWNERS = 4;
      private final com.mojang.brigadier.CommandDispatcher<CommandSourceStack> dispatcher = new com.mojang.brigadier.CommandDispatcher();
@@ -26,7 +26,7 @@ index 564e7cdef5cc9c2c36bc5a5a6baf593d4d6607c9..8ffa19484b31ead5508f07f642a3f9d1
  
      public Commands(Commands.CommandSelection environment, CommandBuildContext commandRegistryAccess) {
          // Paper
-@@ -268,6 +270,15 @@ public class Commands {
+@@ -273,6 +275,15 @@ public class Commands {
  //            this.vanillaCommandNodes.add(node);
          }
          // Moose end
