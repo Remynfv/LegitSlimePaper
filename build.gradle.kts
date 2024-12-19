@@ -3,10 +3,9 @@ import io.papermc.paperweight.util.Git
 plugins {
     java
     `maven-publish`
-    id("com.gradleup.shadow") version "8.3.0" apply false
-    id("io.papermc.paperweight.patcher") version "1.7.1"
-    id("org.kordamp.gradle.profiles") version "0.47.0"
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("com.gradleup.shadow") version "8.3.5" apply false
+    id("io.papermc.paperweight.patcher") version "1.7.7"
+    id("org.kordamp.gradle.profiles") version "0.54.0"
 }
 
 val paperMavenPublicUrl = "https://repo.papermc.io/repository/maven-public/"

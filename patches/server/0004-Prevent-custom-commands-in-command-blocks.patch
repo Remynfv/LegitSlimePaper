@@ -21,7 +21,7 @@ index dc76fcf4c6cc6cd65ce117b1855c15ede60f30ab..06b0403caa3a4a826619ace4211405b4
      protected CommandNode(final Command<S> command, final Predicate<S> requirement, final CommandNode<S> redirect, final RedirectModifier<S> modifier, final boolean forks) {
          this.command = command;
 diff --git a/src/main/java/net/minecraft/commands/Commands.java b/src/main/java/net/minecraft/commands/Commands.java
-index 1d1e76de60e40224f5cb81893f9ee50fe987badb..564e7cdef5cc9c2c36bc5a5a6baf593d4d6607c9 100644
+index 517cb238ec280aadd1fc54bcb675ed386e798eaf..a75bbc9cae438e55c8711a455b047aae391a7a4d 100644
 --- a/src/main/java/net/minecraft/commands/Commands.java
 +++ b/src/main/java/net/minecraft/commands/Commands.java
 @@ -1,6 +1,7 @@
@@ -40,7 +40,7 @@ index 1d1e76de60e40224f5cb81893f9ee50fe987badb..564e7cdef5cc9c2c36bc5a5a6baf593d
  import net.minecraft.server.commands.GiveCommand;
  import net.minecraft.server.commands.HelpCommand;
  import net.minecraft.server.commands.ItemCommands;
-@@ -256,6 +258,17 @@ public class Commands {
+@@ -261,6 +263,17 @@ public class Commands {
              PublishCommand.register(this.dispatcher);
          }
  
@@ -58,7 +58,7 @@ index 1d1e76de60e40224f5cb81893f9ee50fe987badb..564e7cdef5cc9c2c36bc5a5a6baf593d
          // Paper start - Vanilla command permission fixes
          for (final CommandNode<CommandSourceStack> node : this.dispatcher.getRoot().getChildren()) {
              if (node.getRequirement() == com.mojang.brigadier.builder.ArgumentBuilder.<CommandSourceStack>defaultRequirement()) {
-@@ -346,13 +359,21 @@ public class Commands {
+@@ -351,13 +364,21 @@ public class Commands {
          ContextChain contextchain = this.finishParsing(parseresults, s, commandlistenerwrapper, label); // CraftBukkit // Paper - Add UnknownCommandEvent
  
          try {
