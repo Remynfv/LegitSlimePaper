@@ -1,0 +1,32 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: SB2DD <45701824+Mrredstone5230@users.noreply.github.com>
+Date: Thu, 26 Dec 2024 10:35:10 -0500
+Subject: [PATCH] Added /data concat
+
+This would allow for concatenating strings in NBT data. (Currently incredibly hard/impossible to do correctly with quote support (" and '))
+It also stringifies the elements before concatenating them, so it should work with any type of element. (This being another feature, since '/data... string..' doesnt stringify lists and compounds).
+
+diff --git a/src/main/java/net/minecraft/server/commands/data/DataCommands.java b/src/main/java/net/minecraft/server/commands/data/DataCommands.java
+index 1888a65b6be0878cd47940045b4dd359bcbd19ae..5d1d38cf14cfdece3074f3aba18e4ff4b6fb1ecf 100644
+--- a/src/main/java/net/minecraft/server/commands/data/DataCommands.java
++++ b/src/main/java/net/minecraft/server/commands/data/DataCommands.java
+@@ -138,6 +138,19 @@ public class DataCommands {
+                                     Commands.literal("set")
+                                         .then(modifier.create((context, sourceNbt, path, elements) -> path.set(sourceNbt, Iterables.getLast(elements))))
+                                 )
++                                .then( // Moose start - Adding /data concat.
++                                    Commands.literal("concat")
++                                        .then(modifier.create((context, sourceNbt, path, elements) -> {
++                                            if (path.get(sourceNbt).isEmpty() || elements.isEmpty()) {
++                                                throw new SimpleCommandExceptionType(Component.literal("Cannot concat an empty element.")).create(); // Shouldn't happen. Avoids NPE.
++                                            }
++                                            String str = path.get(sourceNbt).getFirst().getAsString(); // Not using getAsText since we want to allow stringifying lists and compounds.
++                                            String str2 = elements.getFirst().getAsString();
++                                            path.set(sourceNbt, StringTag.valueOf(str + str2));
++
++                                           return (str+str2).length(); // Return the length of the new string.
++                                        }))
++                                ) // Moose end
+                                 .then(Commands.literal("merge").then(modifier.create((context, element, path, elements) -> {
+                                     CompoundTag compoundTag = new CompoundTag();
+ 
