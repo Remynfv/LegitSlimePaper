@@ -1,0 +1,19 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: SB2DD <45701824+Mrredstone5230@users.noreply.github.com>
+Date: Tue, 31 Dec 2024 00:28:19 -0500
+Subject: [PATCH] Updated Adventure
+
+
+diff --git a/build.gradle.kts b/build.gradle.kts
+index 02f4d968b9cb1d136daf7ebbae1621d816852415..49b7bfb64cf710cda913a0ecaf7f5da4ef9a3b81 100644
+--- a/build.gradle.kts
++++ b/build.gradle.kts
+@@ -22,7 +22,7 @@ dependencies {
+     // Paper start
+     implementation("org.jline:jline-terminal-jansi:3.21.0")
+     implementation("net.minecrell:terminalconsoleappender:1.3.0")
+-    implementation("net.kyori:adventure-text-serializer-ansi:4.17.0") // Keep in sync with adventureVersion from Paper-API build file
++    implementation("net.kyori:adventure-text-serializer-ansi:4.18.0") // Keep in sync with adventureVersion from Paper-API build file
+     /*
+           Required to add the missing Log4j2Plugins.dat file from log4j-core
+           which has been removed by Mojang. Without it, log4j has to classload
