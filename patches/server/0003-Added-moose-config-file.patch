@@ -6,7 +6,7 @@ Subject: [PATCH] Added moose config file
 
 diff --git a/src/main/java/com/legitimoose/lsp/MooseConfig.java b/src/main/java/com/legitimoose/lsp/MooseConfig.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..3730c2f902dd23a97df4d5d3b3cc57cf8cb13ef1
+index 0000000000000000000000000000000000000000..8c2c11750fb8fd48a1fc53419f961672fb6fca14
 --- /dev/null
 +++ b/src/main/java/com/legitimoose/lsp/MooseConfig.java
 @@ -0,0 +1,117 @@
@@ -113,18 +113,18 @@ index 0000000000000000000000000000000000000000..3730c2f902dd23a97df4d5d3b3cc57cf
 +//    ========================================================================
 +
 +
-+    public static List<String> blacklistedVanillaCommands = new ArrayList<>();
++    public static List<String> blacklistedVanillaCommands;
 +    private static void blacklistedVanillaCommands() {
-+        MooseConfig.blacklistedVanillaCommands = MooseConfig.getList("blacklisted-vanilla-commands-in-cmd-blocks", List.of(
++        MooseConfig.blacklistedVanillaCommands = MooseConfig.getList("blacklisted-vanilla-commands-in-cmd-blocks", new ArrayList<>(List.of(
 +                "stop", "kick", "op", "deop", "ban", "ban-ip", "pardon", "pardon-ip", "reload", "jfr", "debug", "whitelist", "perf", "save-all", "save-on", "save-off", "setidletimeout"
-+        ));
++        )));
 +    }
 +
-+    public static List<String> allowedExtraCommands = new ArrayList<>();
++    public static List<String> allowedExtraCommands;
 +    private static void allowedExtraCommands() {
-+        MooseConfig.allowedExtraCommands = MooseConfig.getList("allowed-extra-commands-in-cmd-blocks", List.of(
++        MooseConfig.allowedExtraCommands = MooseConfig.getList("allowed-extra-commands-in-cmd-blocks", new ArrayList<>(List.of(
 +
-+        ));
++        )));
 +    }
 +}
 \ No newline at end of file
@@ -150,7 +150,7 @@ index 581bd217304e0f9e0b2113c335694805dfb4e2a1..60f6e117010553e2a13c07fda7d00694
              boolean eulaAgreed = Boolean.getBoolean( "com.mojang.eula.agree" );
              if ( eulaAgreed )
 diff --git a/src/main/java/org/bukkit/craftbukkit/Main.java b/src/main/java/org/bukkit/craftbukkit/Main.java
-index c1e88c31910e96ef07cece05046c0b55e708b52d..5818762a0750c9bcd01a986b75886b2ee511ea1a 100644
+index b3ba6bccdbb08af27916f0c611c60b2595b90164..ad77dfbf7834bf8e58033464a08cf5e4b678c26d 100644
 --- a/src/main/java/org/bukkit/craftbukkit/Main.java
 +++ b/src/main/java/org/bukkit/craftbukkit/Main.java
 @@ -183,6 +183,14 @@ public class Main {
