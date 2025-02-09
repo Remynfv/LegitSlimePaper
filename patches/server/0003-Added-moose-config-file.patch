@@ -6,7 +6,7 @@ Subject: [PATCH] Added moose config file
 
 diff --git a/src/main/java/com/legitimoose/lsp/MooseConfig.java b/src/main/java/com/legitimoose/lsp/MooseConfig.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..8c2c11750fb8fd48a1fc53419f961672fb6fca14
+index 0000000000000000000000000000000000000000..4415cb7c5794d2489eb882c531f54e7329c2f000
 --- /dev/null
 +++ b/src/main/java/com/legitimoose/lsp/MooseConfig.java
 @@ -0,0 +1,117 @@
@@ -113,14 +113,14 @@ index 0000000000000000000000000000000000000000..8c2c11750fb8fd48a1fc53419f961672
 +//    ========================================================================
 +
 +
-+    public static List<String> blacklistedVanillaCommands;
++    public static List<String> blacklistedVanillaCommands = new ArrayList<>();
 +    private static void blacklistedVanillaCommands() {
 +        MooseConfig.blacklistedVanillaCommands = MooseConfig.getList("blacklisted-vanilla-commands-in-cmd-blocks", new ArrayList<>(List.of(
 +                "stop", "kick", "op", "deop", "ban", "ban-ip", "pardon", "pardon-ip", "reload", "jfr", "debug", "whitelist", "perf", "save-all", "save-on", "save-off", "setidletimeout"
 +        )));
 +    }
 +
-+    public static List<String> allowedExtraCommands;
++    public static List<String> allowedExtraCommands = new ArrayList<>();
 +    private static void allowedExtraCommands() {
 +        MooseConfig.allowedExtraCommands = MooseConfig.getList("allowed-extra-commands-in-cmd-blocks", new ArrayList<>(List.of(
 +
