@@ -5,10 +5,10 @@ Subject: [PATCH] Allow modifying player data
 
 
 diff --git a/src/main/java/net/minecraft/server/commands/data/EntityDataAccessor.java b/src/main/java/net/minecraft/server/commands/data/EntityDataAccessor.java
-index a0755d4cdaf2bf7cba799a246345c8ba85ec6042..be31384194f255496efa10c86e95fcb2dc92d0ca 100644
+index a0755d4cdaf2bf7cba799a246345c8ba85ec6042..cb20b5b276d843d7a04c9b08feb4f90814ef2ce2 100644
 --- a/src/main/java/net/minecraft/server/commands/data/EntityDataAccessor.java
 +++ b/src/main/java/net/minecraft/server/commands/data/EntityDataAccessor.java
-@@ -12,10 +12,10 @@ import net.minecraft.commands.CommandSourceStack;
+@@ -12,11 +12,13 @@ import net.minecraft.commands.CommandSourceStack;
  import net.minecraft.commands.Commands;
  import net.minecraft.commands.arguments.EntityArgument;
  import net.minecraft.commands.arguments.NbtPathArgument;
@@ -17,12 +17,15 @@ index a0755d4cdaf2bf7cba799a246345c8ba85ec6042..be31384194f255496efa10c86e95fcb2
 -import net.minecraft.nbt.Tag;
 +import net.minecraft.nbt.*;
  import net.minecraft.network.chat.Component;
++import net.minecraft.network.protocol.game.ClientboundSetCarriedItemPacket;
 +import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 +import net.minecraft.server.level.ServerPlayer;
  import net.minecraft.world.entity.Entity;
++import net.minecraft.world.entity.player.Inventory;
  import net.minecraft.world.entity.player.Player;
  
-@@ -44,7 +44,44 @@ public class EntityDataAccessor implements DataAccessor {
+ public class EntityDataAccessor implements DataAccessor {
+@@ -44,7 +46,51 @@ public class EntityDataAccessor implements DataAccessor {
      @Override
      public void setData(CompoundTag nbt) throws CommandSyntaxException {
          if (this.entity instanceof Player) {
@@ -61,6 +64,13 @@ index a0755d4cdaf2bf7cba799a246345c8ba85ec6042..be31384194f255496efa10c86e95fcb2
 +                        player.getAbilities().setWalkingSpeed(abilities.getFloat("walkSpeed"));
 +
 +                        player.onUpdateAbilities();
++                    }
++                    case "SelectedItemSlot" -> {
++                        int slot = ((NumericTag) nbt.get(key)).getAsInt();
++                        if (Inventory.isHotbarSlot(slot)) {
++                            player.getInventory().selected = slot;
++                            player.connection.sendPacket(new ClientboundSetCarriedItemPacket(slot));
++                        }
 +                    }
 +                }
 +            }
