@@ -5,10 +5,20 @@ Subject: [PATCH] Allow modifying player data
 
 
 diff --git a/src/main/java/net/minecraft/server/commands/data/EntityDataAccessor.java b/src/main/java/net/minecraft/server/commands/data/EntityDataAccessor.java
-index a0755d4cdaf2bf7cba799a246345c8ba85ec6042..cb20b5b276d843d7a04c9b08feb4f90814ef2ce2 100644
+index a0755d4cdaf2bf7cba799a246345c8ba85ec6042..c017fdb898df75e3f80cc327e4e55bfbc9f8db6f 100644
 --- a/src/main/java/net/minecraft/server/commands/data/EntityDataAccessor.java
 +++ b/src/main/java/net/minecraft/server/commands/data/EntityDataAccessor.java
-@@ -12,11 +12,13 @@ import net.minecraft.commands.CommandSourceStack;
+@@ -4,37 +4,41 @@ import com.mojang.brigadier.builder.ArgumentBuilder;
+ import com.mojang.brigadier.context.CommandContext;
+ import com.mojang.brigadier.exceptions.CommandSyntaxException;
+ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
++
+ import java.util.Locale;
+ import java.util.UUID;
+ import java.util.function.Function;
++
+ import net.minecraft.advancements.critereon.NbtPredicate;
+ import net.minecraft.commands.CommandSourceStack;
  import net.minecraft.commands.Commands;
  import net.minecraft.commands.arguments.EntityArgument;
  import net.minecraft.commands.arguments.NbtPathArgument;
@@ -25,7 +35,37 @@ index a0755d4cdaf2bf7cba799a246345c8ba85ec6042..cb20b5b276d843d7a04c9b08feb4f908
  import net.minecraft.world.entity.player.Player;
  
  public class EntityDataAccessor implements DataAccessor {
-@@ -44,7 +46,51 @@ public class EntityDataAccessor implements DataAccessor {
+     private static final SimpleCommandExceptionType ERROR_NO_PLAYERS = new SimpleCommandExceptionType(Component.translatable("commands.data.entity.invalid"));
+     public static final Function<String, DataCommands.DataProvider> PROVIDER = argumentName -> new DataCommands.DataProvider() {
+-            @Override
+-            public DataAccessor access(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+-                return new EntityDataAccessor(EntityArgument.getEntity(context, argumentName));
+-            }
++        @Override
++        public DataAccessor access(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
++            return new EntityDataAccessor(EntityArgument.getEntity(context, argumentName));
++        }
+ 
+-            @Override
+-            public ArgumentBuilder<CommandSourceStack, ?> wrap(
+-                ArgumentBuilder<CommandSourceStack, ?> argument,
+-                Function<ArgumentBuilder<CommandSourceStack, ?>, ArgumentBuilder<CommandSourceStack, ?>> argumentAdder
+-            ) {
+-                return argument.then(Commands.literal("entity").then(argumentAdder.apply(Commands.argument(argumentName, EntityArgument.entity()))));
+-            }
+-        };
++        @Override
++        public ArgumentBuilder<CommandSourceStack, ?> wrap(
++            ArgumentBuilder<CommandSourceStack, ?> argument,
++            Function<ArgumentBuilder<CommandSourceStack, ?>, ArgumentBuilder<CommandSourceStack, ?>> argumentAdder
++        ) {
++            return argument.then(Commands.literal("entity").then(argumentAdder.apply(Commands.argument(argumentName, EntityArgument.entity()))));
++        }
++    };
+     private final Entity entity;
+ 
+     public EntityDataAccessor(Entity entity) {
+@@ -44,7 +48,63 @@ public class EntityDataAccessor implements DataAccessor {
      @Override
      public void setData(CompoundTag nbt) throws CommandSyntaxException {
          if (this.entity instanceof Player) {
@@ -72,6 +112,18 @@ index a0755d4cdaf2bf7cba799a246345c8ba85ec6042..cb20b5b276d843d7a04c9b08feb4f908
 +                            player.connection.sendPacket(new ClientboundSetCarriedItemPacket(slot));
 +                        }
 +                    }
++                    case "HasVisualFire" -> player.hasVisualFire = (((NumericTag) nbt.get(key)).getAsByte() != 0);
++                    case "TicksFrozen" -> player.setTicksFrozen(((NumericTag) nbt.get(key)).getAsInt());
++                    case "FallFlying" -> {
++                        if (((NumericTag) nbt.get(key)).getAsByte() != 0) {
++                            player.startFallFlying();
++                        } else {
++                            player.stopFallFlying();
++                        }
++                    }
++                    case "FoodExhaustionLevel" -> player.getFoodData().setExhaustion(((NumericTag) nbt.get(key)).getAsFloat());
++                    case "FoodLevel" -> player.getFoodData().setFoodLevel(((NumericTag) nbt.get(key)).getAsInt());
++                    case "FoodSaturationLevel" -> player.getFoodData().setSaturation(((NumericTag) nbt.get(key)).getAsFloat());
 +                }
 +            }
 +            // Moose end - Allow modifying player data
