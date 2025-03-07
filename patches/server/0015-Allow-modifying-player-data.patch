@@ -5,20 +5,17 @@ Subject: [PATCH] Allow modifying player data
 
 
 diff --git a/src/main/java/net/minecraft/server/commands/data/EntityDataAccessor.java b/src/main/java/net/minecraft/server/commands/data/EntityDataAccessor.java
-index a0755d4cdaf2bf7cba799a246345c8ba85ec6042..c017fdb898df75e3f80cc327e4e55bfbc9f8db6f 100644
+index a0755d4cdaf2bf7cba799a246345c8ba85ec6042..e3894e47ef0e924e35f97d2cb00ae6eb2a1ad879 100644
 --- a/src/main/java/net/minecraft/server/commands/data/EntityDataAccessor.java
 +++ b/src/main/java/net/minecraft/server/commands/data/EntityDataAccessor.java
-@@ -4,37 +4,41 @@ import com.mojang.brigadier.builder.ArgumentBuilder;
+@@ -1,5 +1,6 @@
+ package net.minecraft.server.commands.data;
+ 
++import com.legitimoose.lsp.MooseConfig;
+ import com.mojang.brigadier.builder.ArgumentBuilder;
  import com.mojang.brigadier.context.CommandContext;
  import com.mojang.brigadier.exceptions.CommandSyntaxException;
- import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
-+
- import java.util.Locale;
- import java.util.UUID;
- import java.util.function.Function;
-+
- import net.minecraft.advancements.critereon.NbtPredicate;
- import net.minecraft.commands.CommandSourceStack;
+@@ -12,11 +13,13 @@ import net.minecraft.commands.CommandSourceStack;
  import net.minecraft.commands.Commands;
  import net.minecraft.commands.arguments.EntityArgument;
  import net.minecraft.commands.arguments.NbtPathArgument;
@@ -35,42 +32,14 @@ index a0755d4cdaf2bf7cba799a246345c8ba85ec6042..c017fdb898df75e3f80cc327e4e55bfb
  import net.minecraft.world.entity.player.Player;
  
  public class EntityDataAccessor implements DataAccessor {
-     private static final SimpleCommandExceptionType ERROR_NO_PLAYERS = new SimpleCommandExceptionType(Component.translatable("commands.data.entity.invalid"));
-     public static final Function<String, DataCommands.DataProvider> PROVIDER = argumentName -> new DataCommands.DataProvider() {
--            @Override
--            public DataAccessor access(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
--                return new EntityDataAccessor(EntityArgument.getEntity(context, argumentName));
--            }
-+        @Override
-+        public DataAccessor access(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-+            return new EntityDataAccessor(EntityArgument.getEntity(context, argumentName));
-+        }
- 
--            @Override
--            public ArgumentBuilder<CommandSourceStack, ?> wrap(
--                ArgumentBuilder<CommandSourceStack, ?> argument,
--                Function<ArgumentBuilder<CommandSourceStack, ?>, ArgumentBuilder<CommandSourceStack, ?>> argumentAdder
--            ) {
--                return argument.then(Commands.literal("entity").then(argumentAdder.apply(Commands.argument(argumentName, EntityArgument.entity()))));
--            }
--        };
-+        @Override
-+        public ArgumentBuilder<CommandSourceStack, ?> wrap(
-+            ArgumentBuilder<CommandSourceStack, ?> argument,
-+            Function<ArgumentBuilder<CommandSourceStack, ?>, ArgumentBuilder<CommandSourceStack, ?>> argumentAdder
-+        ) {
-+            return argument.then(Commands.literal("entity").then(argumentAdder.apply(Commands.argument(argumentName, EntityArgument.entity()))));
-+        }
-+    };
-     private final Entity entity;
- 
-     public EntityDataAccessor(Entity entity) {
-@@ -44,7 +48,63 @@ public class EntityDataAccessor implements DataAccessor {
+@@ -44,7 +47,65 @@ public class EntityDataAccessor implements DataAccessor {
      @Override
      public void setData(CompoundTag nbt) throws CommandSyntaxException {
          if (this.entity instanceof Player) {
 -            throw ERROR_NO_PLAYERS.create();
 +            // Moose start - Allow modifying player data
++            if (!MooseConfig.allowPlayerDataModification)
++                throw ERROR_NO_PLAYERS.create();
 +            // From - https://github.com/eclipseisoffline/modifyplayerdata/
 +            CompoundTag oldNbt = NbtPredicate.getEntityTagToCompare(entity);
 +
@@ -86,7 +55,7 @@ index a0755d4cdaf2bf7cba799a246345c8ba85ec6042..c017fdb898df75e3f80cc327e4e55bfb
 +                    case "Invulnerable" -> player.setInvulnerable(((NumericTag) nbt.get(key)).getAsByte() != 0);
 +                    case "Motion" -> {
 +                        ListTag velocity = (ListTag) nbt.get(key);
-+                        player.setDeltaMovement(velocity.getDouble(0), velocity.getDouble(1), velocity.getDouble(2));
++                        player.setDeltaMovement(((NumericTag)velocity.get(0)).getAsDouble(), ((NumericTag)velocity.get(1)).getAsDouble(), ((NumericTag)velocity.get(2)).getAsDouble());
 +                        player.connection.sendPacket(new ClientboundSetEntityMotionPacket(player));
 +                    }
 +                    case "NoGravity" -> player.setNoGravity(((NumericTag) nbt.get(key)).getAsByte() != 0);
