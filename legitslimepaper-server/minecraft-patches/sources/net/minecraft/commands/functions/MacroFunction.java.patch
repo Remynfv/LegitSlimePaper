@@ -1,0 +1,18 @@
+--- a/net/minecraft/commands/functions/MacroFunction.java
++++ b/net/minecraft/commands/functions/MacroFunction.java
+@@ -13,6 +_,7 @@
+ import java.util.Locale;
+ import javax.annotation.Nullable;
+ import net.minecraft.Util;
++import net.minecraft.commands.Commands;
+ import net.minecraft.commands.ExecutionCommandSource;
+ import net.minecraft.commands.FunctionInstantiationException;
+ import net.minecraft.commands.execution.UnboundEntryAction;
+@@ -50,6 +_,7 @@
+ 
+     @Override
+     public InstantiatedFunction<T> instantiate(@Nullable CompoundTag arguments, CommandDispatcher<T> dispatcher) throws FunctionInstantiationException {
++        dispatcher = (CommandDispatcher<T>) Commands.vanillaCommands; // Moose
+         if (arguments == null) {
+             throw new FunctionInstantiationException(Component.translatable("commands.function.error.missing_arguments", Component.translationArg(this.id())));
+         } else {

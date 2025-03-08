@@ -1,0 +1,43 @@
+--- a/com/mojang/brigadier/tree/CommandNode.java
++++ b/com/mojang/brigadier/tree/CommandNode.java
+@@ -3,6 +_,7 @@
+ 
+ package com.mojang.brigadier.tree;
+ 
++import com.legitimoose.lsp.MooseConfig;
+ import com.mojang.brigadier.AmbiguityConsumer;
+ import com.mojang.brigadier.Command;
+ import com.mojang.brigadier.RedirectModifier;
+@@ -13,6 +_,10 @@
+ import com.mojang.brigadier.exceptions.CommandSyntaxException;
+ import com.mojang.brigadier.suggestion.Suggestions;
+ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
++import net.minecraft.commands.CommandSourceStack;
++import net.minecraft.commands.Commands;
++import net.minecraft.server.MinecraftServer;
++import org.bukkit.Bukkit;
+ 
+ import java.util.Collection;
+ import java.util.Collections;
+@@ -43,6 +_,7 @@
+         this.arguments.remove(name);
+     }
+     // CraftBukkit end
++    public Boolean commandBlockAllowed = false; // Moose
+ 
+     protected CommandNode(final Command<S> command, final Predicate<S> requirement, final CommandNode<S> redirect, final RedirectModifier<S> modifier, final boolean forks) {
+         this.command = command;
+@@ -102,6 +_,13 @@
+             }
+         } else {
+             children.put(node.getName(), node);
++            // Moose start - Allow extra commands from moose config
++            if (MinecraftServer.getServer() != null && MinecraftServer.getServer().getCommands().getDispatcher().getRoot().equals(this) && MooseConfig.allowedExtraCommands.contains(node.getName())) {
++                node.commandBlockAllowed = true;
++                Commands.vanillaCommands.getRoot().addChild((CommandNode<CommandSourceStack>) node);
++                Bukkit.getLogger().info("Allowed extra command " + node.getName());
++            }
++            // Moose end
+             if (node instanceof LiteralCommandNode) {
+                 literals.put(node.getName(), (LiteralCommandNode<S>) node);
+             } else if (node instanceof ArgumentCommandNode) {

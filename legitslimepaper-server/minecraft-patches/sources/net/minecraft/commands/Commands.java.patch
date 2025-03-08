@@ -1,0 +1,84 @@
+--- a/net/minecraft/commands/Commands.java
++++ b/net/minecraft/commands/Commands.java
+@@ -1,6 +_,7 @@
+ package net.minecraft.commands;
+ 
+ import com.google.common.collect.Maps;
++import com.legitimoose.lsp.MooseConfig;
+ import com.mojang.brigadier.CommandDispatcher;
+ import com.mojang.brigadier.ParseResults;
+ import com.mojang.brigadier.StringReader;
+@@ -38,7 +_,6 @@
+ import net.minecraft.network.chat.ClickEvent;
+ import net.minecraft.network.chat.CommonComponents;
+ import net.minecraft.network.chat.Component;
+-import net.minecraft.network.chat.ComponentUtils;
+ import net.minecraft.network.chat.HoverEvent;
+ import net.minecraft.network.chat.MutableComponent;
+ import net.minecraft.network.protocol.game.ClientboundCommandsPacket;
+@@ -136,6 +_,7 @@
+ import net.minecraft.util.profiling.jfr.JvmProfiler;
+ import net.minecraft.world.flag.FeatureFlagSet;
+ import net.minecraft.world.flag.FeatureFlags;
++import net.minecraft.world.level.BaseCommandBlock;
+ import net.minecraft.world.level.GameRules;
+ import org.slf4j.Logger;
+ 
+@@ -148,6 +_,7 @@
+     public static final int LEVEL_ADMINS = 3;
+     public static final int LEVEL_OWNERS = 4;
+     private final CommandDispatcher<CommandSourceStack> dispatcher = new CommandDispatcher<>();
++    public static CommandDispatcher<CommandSourceStack> vanillaCommands = new CommandDispatcher<>(); // Moose
+ 
+     public Commands(Commands.CommandSelection selection, CommandBuildContext context) {
+     // Paper start - Brigadier API - modern minecraft overloads that do not use redirects but are copies instead
+@@ -256,6 +_,25 @@
+             PublishCommand.register(this.dispatcher);
+         }
+ 
++        // Moose start - Special boolean to track command block allowed commands (allowed to be ran by command blocks and click events).
++        for (CommandNode<CommandSourceStack> node : this.dispatcher.getRoot().getChildren()) {
++            String cmd = node.getName();
++            if (!MooseConfig.blacklistedVanillaCommands.contains(cmd)) {
++                    node.commandBlockAllowed = true;
++            }
++            //this.vanillaCommandNodes.add(node);
++        }
++        // Moose end
++        // Moose start - Copy all the vanilla commands into a new root for use in /execute. Prevents plugin commands being run.
++        vanillaCommands.getRoot().clearAll(); // Moose - Allow reloading of RessourceOrId arguments (like in /loot command)
++        for (CommandNode<CommandSourceStack> node : this.dispatcher.getRoot().getChildren()) {
++            if (!node.commandBlockAllowed) {
++                continue;
++            }
++            vanillaCommands.getRoot().addChild(node);
++        }
++        // Moose end
++
+         // Paper start - Vanilla command permission fixes
+         for (final CommandNode<CommandSourceStack> node : this.dispatcher.getRoot().getChildren()) {
+             if (node.getRequirement() == com.mojang.brigadier.builder.ArgumentBuilder.<CommandSourceStack>defaultRequirement()) {
+@@ -353,6 +_,14 @@
+         ContextChain contextChain = this.finishParsing(parseResults, command, commandSourceStack, label); // CraftBukkit // Paper - Add UnknownCommandEvent
+ 
+         try {
++            // Moose start - Command block whitelist
++            if (parseResults.getContext().getSource().source instanceof BaseCommandBlock) {
++                if (!parseResults.getContext().getNodes().get(0).getNode().commandBlockAllowed) {
++                    throw new Exception("Non-vanilla commands cannot be executed in command blocks.");
++                }
++            }
++            // Moose end
++
+             if (contextChain != null) {
+                 executeCommandInContext(
+                     commandSourceStack,
+@@ -362,7 +_,7 @@
+                 );
+             }
+         } catch (Exception var12) {
+-            if (throwCommandError) throw var12; // Paper
++            if (throwCommandError) throw new RuntimeException(var12); // Paper Moose
+             MutableComponent mutableComponent = Component.literal(var12.getMessage() == null ? var12.getClass().getName() : var12.getMessage());
+             LOGGER.error("Command exception: /{}", command, var12); // Paper - always show execution exception in console log
+             if (commandSourceStack.getServer().isDebugging() || LOGGER.isDebugEnabled()) { // Paper - Debugging

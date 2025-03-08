@@ -1,0 +1,10 @@
+--- a/core/build.gradle.kts
++++ b/core/build.gradle.kts
+@@ -3,6 +_,6 @@
+ 
+ dependencies {
+     compileOnly(project(":api"))
+-    compileOnly(project(":slimeworldmanager-api"))
++    compileOnly(project(":legitslimepaper-api")) // Moose
+     implementation("com.github.luben:zstd-jni:1.5.2-2")
+ }

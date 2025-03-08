@@ -1,0 +1,41 @@
+--- a/net/minecraft/server/Main.java
++++ b/net/minecraft/server/Main.java
+@@ -1,6 +_,6 @@
+ package net.minecraft.server;
+ 
+-import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
++import com.legitimoose.lsp.MooseConfig;
+ import com.mojang.datafixers.DataFixer;
+ import com.mojang.logging.LogUtils;
+ import com.mojang.serialization.Dynamic;
+@@ -16,12 +_,9 @@
+ import java.util.Optional;
+ import java.util.function.BooleanSupplier;
+ import javax.annotation.Nullable;
+-import joptsimple.OptionParser;
++
+ import joptsimple.OptionSet;
+-import joptsimple.OptionSpec;
+-import joptsimple.util.PathConverter;
+ import net.minecraft.CrashReport;
+-import net.minecraft.DefaultUncaughtExceptionHandler;
+ import net.minecraft.SharedConstants;
+ import net.minecraft.SuppressForbidden;
+ import net.minecraft.Util;
+@@ -57,7 +_,6 @@
+ import net.minecraft.world.level.storage.LevelStorageSource;
+ import net.minecraft.world.level.storage.LevelSummary;
+ import net.minecraft.world.level.storage.PrimaryLevelData;
+-import net.minecraft.world.level.storage.WorldData;
+ import org.slf4j.Logger;
+ 
+ public class Main {
+@@ -139,6 +_,8 @@
+                 LOGGER.info("Initialized '{}' and '{}'", path1.toAbsolutePath(), path2.toAbsolutePath());
+                 return;
+             }
++
++            MooseConfig.init((File) optionSet.valueOf("moose-settings")); // Moose - Load moose.yml
+ 
+             // Spigot start
+             boolean eulaAgreed = Boolean.getBoolean("com.mojang.eula.agree");
