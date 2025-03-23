@@ -1,10 +1,28 @@
---- a/slimeworldmanager-server/build.gradle.kts
-+++ b/slimeworldmanager-server/build.gradle.kts
-@@ -31,7 +_,22 @@
-         }
-     }
+--- a/impl/aspaper-server/build.gradle.kts
++++ b/impl/aspaper-server/build.gradle.kts
+@@ -22,17 +_,34 @@
+     // gitFilePatches = true
  
+     val fork = forks.register("aspaper") {
+-        rootDirectory = project.rootProject.layout.projectDirectory.dir("impl")
++//        rootDirectory = rootProject.upstreamsDirectory().get().dir("aspaper/impl")
+ 
+         upstream.patchDir("paperServer") {
++            serverDirectory = rootDirectory.dir("impl/aspaper-server")
++            additionalAts = rootDirectory.file("impl/build-data/aspaper.at")
+             upstreamPath = "paper-server"
+             excludes = setOf("src/minecraft", "patches", "build.gradle.kts")
+-            patchesDir = rootDirectory.dir("aspaper-server/paper-patches")
+-            outputDir = rootDirectory.dir("paper-server")
+-        }
+-    }
+-
 -    activeFork = fork
++            patchesDir = rootDirectory.dir("impl/aspaper-server/paper-patches")
++            outputDir = rootDirectory.dir("paper-server")
++        }
++    }
++
 +    val legitslimepaper = forks.register("legitslimepaper") {
 +        forks = fork
 +        upstream.patchRepo("paperServer") {
@@ -12,11 +30,11 @@
 +            patchesDir = rootDirectory.dir("legitslimepaper-server/paper-patches")
 +            outputDir = rootDirectory.dir("paper-server")
 +        }
-+        upstream.patchDir("slimeworldmanagerServer") {
-+            upstreamPath = "slimeworldmanager-server"
++        upstream.patchDir("aspaperServer") {
++            upstreamPath = "impl/aspaper-server"
 +            excludes = setOf("src/minecraft", "paper-patches", "minecraft-patches", "build.gradle.kts", "build.gradle.kts.patch")
-+            patchesDir = rootDirectory.dir("legitslimepaper-server/slimeworldmanager-patches")
-+            outputDir = rootDirectory.dir("slimeworldmanager-server")
++            patchesDir = rootDirectory.dir("legitslimepaper-server/aspaper-patches")
++            outputDir = rootDirectory.dir("aspaper-server")
 +        }
 +    }
 +
@@ -24,44 +42,44 @@
  
      spigot {
          buildDataRef = "3edaf46ec1eed4115ce1b18d2846cded42577e42"
-@@ -117,10 +_,14 @@
+@@ -118,10 +_,14 @@
      main {
          java { srcDir("../paper-server/src/main/java") }
          resources { srcDir("../paper-server/src/main/resources") }
-+        java { srcDir("../slimeworldmanager-server/src/main/java") }
-+        resources { srcDir("../slimeworldmanager-server/src/main/resources") }
++        java { srcDir("../aspaper-server/src/main/java") }
++        resources { srcDir("../aspaper-server/src/main/resources") }
      }
      test {
          java { srcDir("../paper-server/src/test/java") }
          resources { srcDir("../paper-server/src/test/resources") }
-+        java { srcDir("../slimeworldmanager-server/src/test/java") }
-+        resources { srcDir("../slimeworldmanager-server/src/test/resources") }
++        java { srcDir("../aspaper-server/src/test/java") }
++        resources { srcDir("../aspaper-server/src/test/resources") }
      }
  }
  
-@@ -144,7 +_,7 @@
+@@ -145,7 +_,7 @@
  }
  
  dependencies {
--    implementation(project(":slimeworldmanager-api")) // ASWM
-+    implementation(project(":legitslimepaper-api")) // ASWM // Moose
-     implementation(project(":core")) // ASWM
+-    implementation(project(":impl:aspaper-api")) //ASP
++    implementation(project(":legitslimepaper-api")) //ASP + Moose
+     implementation(project(":core")) //ASP
+     implementation("commons-io:commons-io:2.11.0")
      implementation("ca.spottedleaf:concurrentutil:0.0.3")
-     implementation("org.jline:jline-terminal-ffm:3.27.1") // use ffm on java 22+
-@@ -215,14 +_,14 @@
+@@ -217,14 +_,14 @@
          val gitBranch = git.exec(providers, "rev-parse", "--abbrev-ref", "HEAD").get().trim()
          attributes(
              "Main-Class" to "org.bukkit.craftbukkit.Main",
--            "Implementation-Title" to "Paper",
-+            "Implementation-Title" to "LegitSlimePaper", // Moose
+-            "Implementation-Title" to "AdvancedSlimePaper", //ASP
++            "Implementation-Title" to "LegitSlimePaper", //Moose
              "Implementation-Version" to implementationVersion,
              "Implementation-Vendor" to date,
--            "Specification-Title" to "Paper",
+-            "Specification-Title" to "AdvancedSlimePaper", //ASP
 +            "Specification-Title" to "LegitSlimePaper", // Moose
              "Specification-Version" to project.version,
--            "Specification-Vendor" to "Paper Team",
--            "Brand-Id" to "papermc:paper",
--            "Brand-Name" to "Paper",
+-            "Specification-Vendor" to "InfernalSuite Team", //ASP
+-            "Brand-Id" to "infernalsuite:advancedslimepaper", //ASP
+-            "Brand-Name" to "AdvancedSlimePaper", //ASP
 +            "Specification-Vendor" to "Legitimoose Team", // Moose
 +            "Brand-Id" to "legitimoose:legitslimepaper", // Moose
 +            "Brand-Name" to "LegitSlimePaper", // Moose

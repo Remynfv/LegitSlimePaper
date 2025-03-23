@@ -1,7 +1,8 @@
 pluginManagement {
     repositories {
-        gradlePluginPortal()
         mavenLocal()
+        mavenCentral()
+        gradlePluginPortal()
         maven("https://repo.papermc.io/repository/maven-public/")
     }
 }

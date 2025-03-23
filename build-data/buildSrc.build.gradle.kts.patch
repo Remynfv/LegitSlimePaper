@@ -1,0 +1,19 @@
+--- a/buildSrc/build.gradle.kts
++++ b/buildSrc/build.gradle.kts
+@@ -8,6 +_,7 @@
+     mavenLocal()
+     mavenCentral()
+     gradlePluginPortal()
++    maven("https://repo.papermc.io/repository/maven-public/")
+ }
+ 
+ fun convertPlugin(plugin: Provider<PluginDependency>): String {
+@@ -22,7 +_,7 @@
+     implementation(convertPlugin(libs.plugins.profiles))
+     implementation(convertPlugin(libs.plugins.kotlin.jvm))
+     implementation(convertPlugin(libs.plugins.lombok))
+-    implementation(convertPlugin(libs.plugins.paperweight.patcher))
++//    implementation(convertPlugin(libs.plugins.paperweight.patcher))
+     implementation(convertPlugin(libs.plugins.plugin.yml.paper))
+     implementation(convertPlugin(libs.plugins.shadow))
+ }

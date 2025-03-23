@@ -9,14 +9,15 @@ build
 /legitslimepaper-server/build.gradle.kts
 /legitslimepaper-server/src/minecraft
 /paper-server
-/slimeworldmanager-server
+/aspaper-server
 /legitslimepaper-api/build.gradle.kts
 /paper-api
 /paper-api-generator
-/slimeworldmanager-api
+/aspaper-api
 
 /api/build.gradle.kts
 /api/src/
 /core/build.gradle.kts
 /core/src/
 .idea/
+/buildSrc

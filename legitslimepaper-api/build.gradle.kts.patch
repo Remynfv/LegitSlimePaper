@@ -1,24 +1,33 @@
---- a/slimeworldmanager-api/build.gradle.kts
-+++ b/slimeworldmanager-api/build.gradle.kts
-@@ -105,17 +_,21 @@
+--- a/impl/aspaper-api/build.gradle.kts
++++ b/impl/aspaper-api/build.gradle.kts
+@@ -93,7 +_,7 @@
+     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+ }
+ 
+-val generatedApiPath: java.nio.file.Path = rootProject.layout.projectDirectory.dir("impl/paper-api/src/generated/java").asFile.toPath()
++val generatedApiPath: java.nio.file.Path = rootProject.layout.projectDirectory.dir("paper-api/src/generated/java").asFile.toPath()
+ idea {
+     module {
+         generatedSourceDirs.add(generatedApiPath.toFile())
+@@ -104,17 +_,21 @@
          java {
              srcDir(generatedApiPath)
              srcDir(file("../paper-api/src/main/java"))
-+            srcDir(file("../slimeworldmanager-api/src/main/java"))
++            srcDir(file("../aspaper-api/src/main/java"))
          }
          resources {
              srcDir(file("../paper-api/src/main/resources"))
-+            srcDir(file("../slimeworldmanager-api/src/main/resources"))
++            srcDir(file("../aspaper-api/src/main/resources"))
          }
      }
      test {
          java {
              srcDir(file("../paper-api/src/test/java"))
-+            srcDir(file("../slimeworldmanager-api/src/test/java"))
++            srcDir(file("../aspaper-api/src/test/java"))
          }
          resources {
              srcDir(file("../paper-api/src/test/resources"))
-+            srcDir(file("../slimeworldmanager-api/src/test/resources"))
++            srcDir(file("../aspaper-api/src/test/resources"))
          }
      }
  }

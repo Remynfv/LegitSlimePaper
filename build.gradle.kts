@@ -2,37 +2,34 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
-    id("com.gradleup.shadow") version "8.3.0" apply false
-    id("io.papermc.paperweight.patcher") version "2.0.0-SNAPSHOT"
-    id("org.kordamp.gradle.profiles") version "0.47.0"
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    alias(libs.plugins.paperweight.patcher)
 }
 
 paperweight {
-    upstreams.register("slimeworldmanager") {
-        repo = github("SB2DD", "HardForkedAdvancedSlimePaper")
+    upstreams.register("aspaper") {
+        repo = github("InfernalSuite", "AdvancedSlimePaper")
         ref = providers.gradleProperty("aspRef")
 
         patchFile {
-            path = "slimeworldmanager-server/build.gradle.kts"
+            path = "impl/aspaper-server/build.gradle.kts"
             outputFile = file("legitslimepaper-server/build.gradle.kts")
             patchFile = file("legitslimepaper-server/build.gradle.kts.patch")
         }
         patchFile {
-            path = "slimeworldmanager-api/build.gradle.kts"
+            path = "impl/aspaper-api/build.gradle.kts"
             outputFile = file("legitslimepaper-api/build.gradle.kts")
             patchFile = file("legitslimepaper-api/build.gradle.kts.patch")
         }
         patchRepo("paperApi") {
-            upstreamPath = "paper-api"
+            upstreamPath = "impl/paper-api"
             patchesDir = file("legitslimepaper-api/paper-patches")
             outputDir = file("paper-api")
         }
-        patchDir("slimeworldmanagerApi") {
-            upstreamPath = "slimeworldmanager-api"
+        patchDir("aspaperApi") {
+            upstreamPath = "impl/aspaper-api"
             excludes = listOf("build.gradle.kts", "build.gradle.kts.patch", "paper-patches")
-            patchesDir = file("legitslimepaper-api/slimeworldmanager-patches")
-            outputDir = file("slimeworldmanager-api")
+            patchesDir = file("legitslimepaper-api/aspaper-patches")
+            outputDir = file("aspaper-api")
         }
 
         //ASP :api
@@ -61,6 +58,19 @@ paperweight {
             outputDir = file("core/src")
         }
 
+
+
+        patchFile {
+            path = "buildSrc/build.gradle.kts"
+            outputFile = file("buildSrc/build.gradle.kts")
+            patchFile = file("build-data/buildSrc.build.gradle.kts.patch")
+        }
+        patchDir("aspBuild") {
+            upstreamPath = "buildSrc"
+//            excludes = listOf("build.gradle.kts")
+//            patchesDir = file("core/core-patches")
+            outputDir = file("buildSrc")
+        }
 
     }
 }

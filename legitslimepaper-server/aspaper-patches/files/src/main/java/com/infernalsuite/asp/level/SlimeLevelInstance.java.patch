@@ -1,6 +1,6 @@
---- a/com/infernalsuite/aswm/level/SlimeLevelInstance.java
-+++ b/com/infernalsuite/aswm/level/SlimeLevelInstance.java
-@@ -54,16 +_,10 @@
+--- a/src/main/java/com/infernalsuite/asp/level/SlimeLevelInstance.java
++++ b/src/main/java/com/infernalsuite/asp/level/SlimeLevelInstance.java
+@@ -57,16 +_,10 @@
      public static LevelStorageSource CUSTOM_LEVEL_STORAGE;
  
      static {
@@ -21,7 +21,7 @@
      }
  
      private static final ExecutorService WORLD_SAVER_SERVICE = Executors.newFixedThreadPool(4, new ThreadFactoryBuilder()
-@@ -78,7 +_,7 @@
+@@ -80,7 +_,7 @@
                                org.bukkit.World.Environment environment) throws IOException {
  
          super(slimeBootstrap, MinecraftServer.getServer(), MinecraftServer.getServer().executor,
@@ -30,7 +30,7 @@
                  primaryLevelData, worldKey, worldDimension,
                  MinecraftServer.getServer().progressListenerFactory.create(11), false, 0,
                  Collections.emptyList(), true, null, environment, null, null);
-@@ -118,6 +_,7 @@
+@@ -132,6 +_,7 @@
                  Bukkit.getPluginManager().callEvent(new WorldSaveEvent(getWorld()));
  
                  //this.getChunkSource().save(forceSave);
