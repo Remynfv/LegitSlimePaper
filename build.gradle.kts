@@ -65,9 +65,9 @@ paperweight {
             outputFile = file("buildSrc/build.gradle.kts")
             patchFile = file("build-data/buildSrc.build.gradle.kts.patch")
         }
-        patchDir("aspBuild") {
+        patchDir("aspBuildSrc") {
             upstreamPath = "buildSrc"
-//            excludes = listOf("build.gradle.kts")
+            excludes = listOf("build.gradle.kts")
 //            patchesDir = file("core/core-patches")
             outputDir = file("buildSrc")
         }
