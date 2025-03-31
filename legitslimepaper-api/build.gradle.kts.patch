@@ -1,14 +1,5 @@
---- a/impl/aspaper-api/build.gradle.kts
-+++ b/impl/aspaper-api/build.gradle.kts
-@@ -93,7 +_,7 @@
-     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
- }
- 
--val generatedApiPath: java.nio.file.Path = rootProject.layout.projectDirectory.dir("impl/paper-api/src/generated/java").asFile.toPath()
-+val generatedApiPath: java.nio.file.Path = rootProject.layout.projectDirectory.dir("paper-api/src/generated/java").asFile.toPath()
- idea {
-     module {
-         generatedSourceDirs.add(generatedApiPath.toFile())
+--- a/aspaper-api/build.gradle.kts
++++ b/aspaper-api/build.gradle.kts
 @@ -104,17 +_,21 @@
          java {
              srcDir(generatedApiPath)

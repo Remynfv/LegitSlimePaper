@@ -11,22 +11,22 @@ paperweight {
         ref = providers.gradleProperty("aspRef")
 
         patchFile {
-            path = "impl/aspaper-server/build.gradle.kts"
+            path = "aspaper-server/build.gradle.kts"
             outputFile = file("legitslimepaper-server/build.gradle.kts")
             patchFile = file("legitslimepaper-server/build.gradle.kts.patch")
         }
         patchFile {
-            path = "impl/aspaper-api/build.gradle.kts"
+            path = "aspaper-api/build.gradle.kts"
             outputFile = file("legitslimepaper-api/build.gradle.kts")
             patchFile = file("legitslimepaper-api/build.gradle.kts.patch")
         }
         patchRepo("paperApi") {
-            upstreamPath = "impl/paper-api"
+            upstreamPath = "paper-api"
             patchesDir = file("legitslimepaper-api/paper-patches")
             outputDir = file("paper-api")
         }
         patchDir("aspaperApi") {
-            upstreamPath = "impl/aspaper-api"
+            upstreamPath = "aspaper-api"
             excludes = listOf("build.gradle.kts", "build.gradle.kts.patch", "paper-patches")
             patchesDir = file("legitslimepaper-api/aspaper-patches")
             outputDir = file("aspaper-api")

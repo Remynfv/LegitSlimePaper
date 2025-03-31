@@ -1,37 +1,19 @@
---- a/impl/aspaper-server/build.gradle.kts
-+++ b/impl/aspaper-server/build.gradle.kts
-@@ -22,17 +_,34 @@
-     // gitFilePatches = true
+--- a/aspaper-server/build.gradle.kts
++++ b/aspaper-server/build.gradle.kts
+@@ -30,7 +_,22 @@
+         }
+     }
  
-     val fork = forks.register("aspaper") {
--        rootDirectory = project.rootProject.layout.projectDirectory.dir("impl")
-+//        rootDirectory = rootProject.upstreamsDirectory().get().dir("aspaper/impl")
- 
-         upstream.patchDir("paperServer") {
-+            serverDirectory = rootDirectory.dir("impl/aspaper-server")
-+            additionalAts = rootDirectory.file("impl/build-data/aspaper.at")
-             upstreamPath = "paper-server"
-             excludes = setOf("src/minecraft", "patches", "build.gradle.kts")
--            patchesDir = rootDirectory.dir("aspaper-server/paper-patches")
--            outputDir = rootDirectory.dir("paper-server")
--        }
--    }
--
--    activeFork = fork
-+            patchesDir = rootDirectory.dir("impl/aspaper-server/paper-patches")
-+            outputDir = rootDirectory.dir("paper-server")
-+        }
-+    }
-+
+-    activeFork = aspaper
 +    val legitslimepaper = forks.register("legitslimepaper") {
-+        forks = fork
++        forks = aspaper
 +        upstream.patchRepo("paperServer") {
-+            upstreamRepo = fork.patchedRepo("paperServer")
++            upstreamRepo = aspaper.patchedRepo("paperServer")
 +            patchesDir = rootDirectory.dir("legitslimepaper-server/paper-patches")
 +            outputDir = rootDirectory.dir("paper-server")
 +        }
 +        upstream.patchDir("aspaperServer") {
-+            upstreamPath = "impl/aspaper-server"
++            upstreamPath = "aspaper-server"
 +            excludes = setOf("src/minecraft", "paper-patches", "minecraft-patches", "build.gradle.kts", "build.gradle.kts.patch")
 +            patchesDir = rootDirectory.dir("legitslimepaper-server/aspaper-patches")
 +            outputDir = rootDirectory.dir("aspaper-server")
@@ -42,7 +24,7 @@
  
      spigot {
          buildDataRef = "3edaf46ec1eed4115ce1b18d2846cded42577e42"
-@@ -118,10 +_,14 @@
+@@ -116,10 +_,14 @@
      main {
          java { srcDir("../paper-server/src/main/java") }
          resources { srcDir("../paper-server/src/main/resources") }
@@ -57,16 +39,16 @@
      }
  }
  
-@@ -145,7 +_,7 @@
+@@ -143,7 +_,7 @@
  }
  
  dependencies {
--    implementation(project(":impl:aspaper-api")) //ASP
+-    implementation(project(":aspaper-api")) //ASP
 +    implementation(project(":legitslimepaper-api")) //ASP + Moose
      implementation(project(":core")) //ASP
      implementation("commons-io:commons-io:2.11.0")
      implementation("ca.spottedleaf:concurrentutil:0.0.3")
-@@ -217,14 +_,14 @@
+@@ -215,14 +_,14 @@
          val gitBranch = git.exec(providers, "rev-parse", "--abbrev-ref", "HEAD").get().trim()
          attributes(
              "Main-Class" to "org.bukkit.craftbukkit.Main",

@@ -4,7 +4,7 @@
  
  dependencies {
      compileOnly(project(":api"))
--    compileOnly(project(":impl:aspaper-api"))
+-    compileOnly(project(":aspaper-api"))
 +    compileOnly(project(":legitslimepaper-api")) // Moose
      implementation(libs.zstd)
  }
