@@ -1,0 +1,18 @@
+--- a/net/minecraft/resources/RegistryDataLoader.java
++++ b/net/minecraft/resources/RegistryDataLoader.java
+@@ -166,11 +_,12 @@
+                 map.put(registry.key(), new IllegalStateException("Registry must be non-empty"));
+             }
+         });
++        // Moose start - Don't throw an exception on invalid registry
+         if (!map.isEmpty()) {
+-            throw logErrors(map);
+-        } else {
+-            return new RegistryAccess.ImmutableRegistryAccess(list.stream().map(RegistryDataLoader.Loader::registry).toList()).freeze();
++            logErrors(map);
+         }
++        return new RegistryAccess.ImmutableRegistryAccess(list.stream().map(RegistryDataLoader.Loader::registry).toList()).freeze();
++        // Moose end
+     }
+ 
+     private static RegistryOps.RegistryInfoLookup createContext(

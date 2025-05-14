@@ -1,0 +1,19 @@
+--- a/net/minecraft/server/ServerFunctionLibrary.java
++++ b/net/minecraft/server/ServerFunctionLibrary.java
+@@ -17,6 +_,7 @@
+ import java.util.concurrent.Executor;
+ import net.minecraft.commands.CommandSource;
+ import net.minecraft.commands.CommandSourceStack;
++import net.minecraft.commands.Commands;
+ import net.minecraft.commands.functions.CommandFunction;
+ import net.minecraft.core.Registry;
+ import net.minecraft.core.registries.Registries;
+@@ -89,7 +_,7 @@
+                         ResourceLocation resourceLocation1 = LISTER.fileToId(resourceLocation);
+                         map1.put(resourceLocation1, CompletableFuture.supplyAsync(() -> {
+                             List<String> lines = readLines(entry.getValue());
+-                            return CommandFunction.fromLines(resourceLocation1, this.dispatcher, commandSourceStack, lines);
++                            return CommandFunction.fromLines(resourceLocation1, Commands.vanillaCommands, commandSourceStack, lines);
+                         }, backgroundExecutor));
+                     }
+ 

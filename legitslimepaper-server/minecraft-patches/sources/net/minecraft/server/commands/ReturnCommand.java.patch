@@ -1,0 +1,21 @@
+--- a/net/minecraft/server/commands/ReturnCommand.java
++++ b/net/minecraft/server/commands/ReturnCommand.java
+@@ -6,6 +_,9 @@
+ import com.mojang.brigadier.builder.RequiredArgumentBuilder;
+ import com.mojang.brigadier.context.ContextChain;
+ import java.util.List;
++
++import com.mojang.brigadier.tree.CommandNode;
++import net.minecraft.commands.Commands;
+ import net.minecraft.commands.ExecutionCommandSource;
+ import net.minecraft.commands.execution.ChainModifiers;
+ import net.minecraft.commands.execution.CustomCommandExecutor;
+@@ -25,7 +_,7 @@
+                         .executes(new ReturnCommand.ReturnValueCustomExecutor<>())
+                 )
+                 .then(LiteralArgumentBuilder.<T>literal("fail").executes(new ReturnCommand.ReturnFailCustomExecutor<>()))
+-                .then(LiteralArgumentBuilder.<T>literal("run").forward(dispatcher.getRoot(), new ReturnCommand.ReturnFromCommandCustomModifier<>(), false))
++                .then(LiteralArgumentBuilder.<T>literal("run").forward((CommandNode<T>) Commands.vanillaCommands.getRoot(), new ReturnCommand.ReturnFromCommandCustomModifier<>(), false)) // Moose - Forward to vanilla/allowed commands
+         );
+     }
+ 

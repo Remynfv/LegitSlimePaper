@@ -1,55 +1,113 @@
-import io.papermc.paperweight.util.Git
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
-    java
-    `maven-publish`
-    id("com.gradleup.shadow") version "8.3.0" apply false
-    id("io.papermc.paperweight.patcher") version "1.7.1"
-    id("org.kordamp.gradle.profiles") version "0.47.0"
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    alias(libs.plugins.paperweight.patcher)
+}
+
+paperweight {
+    upstreams.register("aspaper") {
+        repo = github("InfernalSuite", "AdvancedSlimePaper")
+        ref = providers.gradleProperty("aspRef")
+
+        patchFile {
+            path = "aspaper-server/build.gradle.kts"
+            outputFile = file("legitslimepaper-server/build.gradle.kts")
+            patchFile = file("legitslimepaper-server/build.gradle.kts.patch")
+        }
+        patchFile {
+            path = "aspaper-api/build.gradle.kts"
+            outputFile = file("legitslimepaper-api/build.gradle.kts")
+            patchFile = file("legitslimepaper-api/build.gradle.kts.patch")
+        }
+        patchRepo("paperApi") {
+            upstreamPath = "paper-api"
+            patchesDir = file("legitslimepaper-api/paper-patches")
+            outputDir = file("paper-api")
+        }
+        patchDir("aspaperApi") {
+            upstreamPath = "aspaper-api"
+            excludes = listOf("build.gradle.kts", "build.gradle.kts.patch", "paper-patches")
+            patchesDir = file("legitslimepaper-api/aspaper-patches")
+            outputDir = file("aspaper-api")
+        }
+
+        //ASP :api
+        patchFile {
+            path = "api/build.gradle.kts"
+            outputFile = file("api/build.gradle.kts")
+            patchFile = file("api/build.gradle.kts.patch")
+        }
+        patchDir("aspApi") {
+            upstreamPath = "api/src"
+            excludes = listOf("build.gradle.kts")
+            patchesDir = file("api/api-patches")
+            outputDir = file("api/src")
+        }
+
+        //ASP :core
+        patchFile {
+            path = "core/build.gradle.kts"
+            outputFile = file("core/build.gradle.kts")
+            patchFile = file("core/build.gradle.kts.patch")
+        }
+        patchDir("aspCore") {
+            upstreamPath = "core/src"
+            excludes = listOf("build.gradle.kts")
+            patchesDir = file("core/core-patches")
+            outputDir = file("core/src")
+        }
+
+
+
+        patchFile {
+            path = "buildSrc/build.gradle.kts"
+            outputFile = file("buildSrc/build.gradle.kts")
+            patchFile = file("build-data/buildSrc.build.gradle.kts.patch")
+        }
+        patchDir("aspBuildSrc") {
+            upstreamPath = "buildSrc"
+            excludes = listOf("build.gradle.kts")
+//            patchesDir = file("core/core-patches")
+            outputDir = file("buildSrc")
+        }
+
+    }
 }
 
 val paperMavenPublicUrl = "https://repo.papermc.io/repository/maven-public/"
 
-repositories {
-    mavenCentral()
-    maven(paperMavenPublicUrl) {
-        content { onlyForConfigurations(configurations.paperclip.name) }
-    }
-}
-
-allprojects {
-    apply(plugin = "java")
+subprojects {
+    apply(plugin = "java-library")
     apply(plugin = "maven-publish")
 
-    java {
+    extensions.configure<JavaPluginExtension> {
         toolchain {
             languageVersion = JavaLanguageVersion.of(21)
         }
     }
 
     repositories {
-        mavenLocal()
         mavenCentral()
+        maven(paperMavenPublicUrl)
 
         maven("https://repo.papermc.io/repository/maven-public/")
         maven("https://repo.codemc.io/repository/nms/")
         maven("https://repo.rapture.pw/repository/maven-releases/")
         maven("https://repo.glaremasters.me/repository/concuncan/")
         maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+        maven("https://oss.sonatype.org/content/repositories/snapshots/")
+        mavenLocal()
     }
-}
 
-dependencies {
-    remapper("net.fabricmc:tiny-remapper:0.10.3:fat") // Must be kept in sync with upstream
-    decompiler("org.vineflower:vineflower:1.10.1") // Must be kept in sync with upstream
-    paperclip("io.papermc:paperclip:3.0.3") // You probably want this to be kept in sync with upstream
-}
-
-subprojects {
+    tasks.withType<AbstractArchiveTask>().configureEach {
+        isPreserveFileTimestamps = false
+        isReproducibleFileOrder = true
+    }
     tasks.withType<JavaCompile> {
         options.encoding = Charsets.UTF_8.name()
         options.release = 21
+        options.isFork = true
     }
     tasks.withType<Javadoc> {
         options.encoding = Charsets.UTF_8.name()
@@ -57,70 +115,22 @@ subprojects {
     tasks.withType<ProcessResources> {
         filteringCharset = Charsets.UTF_8.name()
     }
-
-    repositories {
-        mavenCentral()
-        maven(paperMavenPublicUrl)
+    tasks.withType<Test> {
+        testLogging {
+            showStackTraces = true
+            exceptionFormat = TestExceptionFormat.FULL
+            events(TestLogEvent.STANDARD_OUT)
+        }
     }
-}
 
-val paperDir = layout.projectDirectory.dir("AdvancedSlimePaper")
-val initSubmodules by tasks.registering {
-    outputs.upToDateWhen { false }
-    doLast {
-        Git(layout.projectDirectory)("submodule", "update", "--init", "--remote").executeOut()
-        Git(paperDir)("checkout", providers.gradleProperty("advancedslimepaperRef").getOrElse("HEAD") ).executeOut()
-    }
-}
-
-paperweight {
-    serverProject = project(":legitslimepaper-server")
-
-    remapRepo.set(paperMavenPublicUrl)
-    decompileRepo.set(paperMavenPublicUrl)
-
-    upstreams {
-        register("slimeworldmanager") {
-//            url = github("infernalsuite", "advancedslimepaper")
-//            ref = providers.gradleProperty("advancedslimepaperRef")
-
-            upstreamDataTask {
-                dependsOn(initSubmodules)
-                projectDir = paperDir
+    extensions.configure<PublishingExtension> {
+        repositories {
+            /*
+            maven("https://repo.papermc.io/repository/maven-snapshots/") {
+                name = "paperSnapshots"
+                credentials(PasswordCredentials::class)
             }
-
-            patchTasks {
-                register("api") {
-                    upstreamDir = paperDir.dir("slimeworldmanager-api")
-                    patchDir = layout.projectDirectory.dir("patches/api")
-                    outputDir = layout.projectDirectory.dir("legitslimepaper-api")
-                }
-                register("server") {
-                    upstreamDir = paperDir.dir("slimeworldmanager-server")
-                    patchDir = layout.projectDirectory.dir("patches/server")
-                    outputDir = layout.projectDirectory.dir("legitslimepaper-server")
-                    importMcDev = true
-                }
-                register("generatedApi") {
-                    isBareDirectory = true
-                    upstreamDir = paperDir.dir("paper-api-generator/generated")
-                    patchDir = layout.projectDirectory.dir("patches/generatedApi")
-                    outputDir = layout.projectDirectory.dir("paper-api-generator/generated")
-                }
-                register("core") {
-                    isBareDirectory = true
-                    upstreamDir = paperDir.dir("core")
-                    patchDir = layout.projectDirectory.dir("patches/core")
-                    outputDir = layout.projectDirectory.dir("core")
-                }
-
-                register("aswmApi") {
-                    isBareDirectory = true
-                    upstreamDir = paperDir.dir("api")
-                    patchDir = layout.projectDirectory.dir("patches/aswmApi")
-                    outputDir = layout.projectDirectory.dir("api")
-                }
-            }
+             */
         }
     }
 }

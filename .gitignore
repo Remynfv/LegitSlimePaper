@@ -1,52 +1,23 @@
-.gradle/
+# Ignore Gradle project-specific cache directory
+.gradle
 
-# Eclipse stuff
-.classpath
-.project
-.settings/
+# Ignore Gradle build output directory
+build
 
-# VSCode stuff
-.vscode/
+/run
 
-# netbeans
-nbproject/
-nbactions.xml
+/legitslimepaper-server/build.gradle.kts
+/legitslimepaper-server/src/minecraft
+/paper-server
+/aspaper-server
+/legitslimepaper-api/build.gradle.kts
+/paper-api
+/paper-api-generator
+/aspaper-api
 
-# we use maven!
-build.xml
-
-# maven
-target/
-dependency-reduced-pom.xml
-
-# vim
-.*.sw[a-p]
-
-# various other potential build files
-build/
-bin/
-dist/
-manifest.mf
-
-# Mac filesystem dust
-.DS_Store/
-.DS_Store
-
-# intellij
-*.iml
-*.ipr
-*.iws
+/api/build.gradle.kts
+/api/src/
+/core/build.gradle.kts
+/core/src/
 .idea/
-out/
-
-# Linux temp files
-*~
-
-# other stuff
-run/
-
-legitslimepaper-server
-legitslimepaper-api
-paper-api-generator
-
-!gradle/wrapper/gradle-wrapper.jar
+/buildSrc

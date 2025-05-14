@@ -1,0 +1,11 @@
+--- a/net/minecraft/server/commands/ExecuteCommand.java
++++ b/net/minecraft/server/commands/ExecuteCommand.java
+@@ -146,7 +_,7 @@
+         dispatcher.register(
+             Commands.literal("execute")
+                 .requires(source -> source.hasPermission(2))
+-                .then(Commands.literal("run").redirect(dispatcher.getRoot()))
++                .then(Commands.literal("run").redirect(Commands.vanillaCommands.getRoot())) // Moose - Only run vanilla commands
+                 .then(addConditionals(literalCommandNode, Commands.literal("if"), true, context))
+                 .then(addConditionals(literalCommandNode, Commands.literal("unless"), false, context))
+                 .then(Commands.literal("as").then(Commands.argument("targets", EntityArgument.entities()).fork(literalCommandNode, context1 -> {

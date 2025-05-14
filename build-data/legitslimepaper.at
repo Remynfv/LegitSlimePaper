@@ -1,0 +1,3 @@
+# This file is auto generated, any changes may be overridden!
+# See CONTRIBUTING.md on how to add access transformers.
+public net.minecraft.server.MinecraftServer readScoreboard(Lnet/minecraft/world/level/storage/DimensionDataStorage;)V

@@ -1,0 +1,32 @@
+--- a/net/minecraft/network/chat/Style.java
++++ b/net/minecraft/network/chat/Style.java
+@@ -7,6 +_,7 @@
+ import java.util.Optional;
+ import javax.annotation.Nullable;
+ import net.minecraft.ChatFormatting;
++import net.minecraft.commands.Commands;
+ import net.minecraft.network.RegistryFriendlyByteBuf;
+ import net.minecraft.network.codec.ByteBufCodecs;
+ import net.minecraft.network.codec.StreamCodec;
+@@ -88,7 +_,20 @@
+         this.underlined = underlined;
+         this.strikethrough = strikethrough;
+         this.obfuscated = obfuscated;
+-        this.clickEvent = clickEvent;
++        // Moose start
++        boolean blackListedCommand = false;
++        if (clickEvent != null && clickEvent.getAction() == ClickEvent.Action.RUN_COMMAND) {
++            String cmd = clickEvent.getValue();
++            cmd = cmd.startsWith("/") ? cmd.substring(1) : cmd;
++            cmd = cmd.split(" ", 2)[0];
++            String finalCmd = cmd;
++
++            if (Commands.vanillaCommands.getRoot().getChildren().stream().noneMatch((node) -> node.commandBlockAllowed && finalCmd.startsWith(node.getName()))) {
++                blackListedCommand = true;
++            }
++        }
++        this.clickEvent = blackListedCommand ? null : clickEvent;
++        // Moose end
+         this.hoverEvent = hoverEvent;
+         this.insertion = insertion;
+         this.font = font;

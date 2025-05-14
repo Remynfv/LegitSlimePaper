@@ -1,0 +1,11 @@
+--- a/src/main/java/io/papermc/paper/ServerBuildInfoImpl.java
++++ b/src/main/java/io/papermc/paper/ServerBuildInfoImpl.java
+@@ -31,7 +_,7 @@
+     private static final String ATTRIBUTE_GIT_COMMIT = "Git-Commit";
+ 
+     private static final String BRAND_PAPER_NAME = "Paper";
+-    private static final String BRAND_ADVANCED_SLIME_PAPER_NAME = "AdvancedSlimePaper";
++    private static final String BRAND_ADVANCED_SLIME_PAPER_NAME = "LegitSlimePaper";
+ 
+     private static final String BUILD_DEV = "DEV";
+ 

@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/player/Player.java
++++ b/net/minecraft/world/entity/player/Player.java
+@@ -2199,7 +_,7 @@
+     }
+ 
+     public boolean canUseGameMasterBlocks() {
+-        return this.abilities.instabuild && this.getPermissionLevel() >= 2;
++        return this.abilities.instabuild && (this.getPermissionLevel() >= 2  || this.getBukkitEntity().hasPermission("minecraft.commandblock")); // Moose - Add permission for interacting with GameMasterBlocks
+     }
+ 
+     public int getPermissionLevel() {
