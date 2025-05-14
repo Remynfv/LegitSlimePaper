@@ -80,10 +80,10 @@ index 187336ecaa4262e3f081a88702031b17c6037091..c3fddd09c239f1560bcd9c4b3b4c6514
 \ No newline at end of file
 +}
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 4434022a6235db9cb453596df7d2aef7bf011363..147b0b33cfc7dfc052f304af8a83185effebf7da 100644
+index ba81a045dc85900b96c6004d03cf9f145e7f3f0f..1a3ea4d6e10e743f5f44731867993738ed026461 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
-@@ -499,7 +499,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
+@@ -498,7 +498,7 @@ public abstract class MinecraftServer extends ReentrantBlockableEventLoop<TickTa
          this.paperConfigurations = services.paperConfigurations(); // Paper - add paper configuration files
      }
  

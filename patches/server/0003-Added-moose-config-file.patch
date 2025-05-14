@@ -6,10 +6,10 @@ Subject: [PATCH] Added moose config file
 
 diff --git a/src/main/java/com/legitimoose/lsp/MooseConfig.java b/src/main/java/com/legitimoose/lsp/MooseConfig.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..4415cb7c5794d2489eb882c531f54e7329c2f000
+index 0000000000000000000000000000000000000000..707e7de82d1bfff8b964e6b03bfa25e6b914712e
 --- /dev/null
 +++ b/src/main/java/com/legitimoose/lsp/MooseConfig.java
-@@ -0,0 +1,117 @@
+@@ -0,0 +1,122 @@
 +package com.legitimoose.lsp;
 +
 +import com.google.common.base.Throwables;
@@ -125,6 +125,11 @@ index 0000000000000000000000000000000000000000..4415cb7c5794d2489eb882c531f54e73
 +        MooseConfig.allowedExtraCommands = MooseConfig.getList("allowed-extra-commands-in-cmd-blocks", new ArrayList<>(List.of(
 +
 +        )));
++    }
++
++    public static boolean allowPlayerDataModification = false;
++    private static void allowPlayerDataModification() {
++        MooseConfig.allowPlayerDataModification = MooseConfig.getBoolean("allow-player-data-modification", false);
 +    }
 +}
 \ No newline at end of file

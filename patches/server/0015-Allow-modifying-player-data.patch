@@ -1,0 +1,101 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Omri H <76548146+OmriPH@users.noreply.github.com>
+Date: Tue, 25 Feb 2025 19:23:58 +0200
+Subject: [PATCH] Allow modifying player data
+
+
+diff --git a/src/main/java/net/minecraft/server/commands/data/EntityDataAccessor.java b/src/main/java/net/minecraft/server/commands/data/EntityDataAccessor.java
+index a0755d4cdaf2bf7cba799a246345c8ba85ec6042..e3894e47ef0e924e35f97d2cb00ae6eb2a1ad879 100644
+--- a/src/main/java/net/minecraft/server/commands/data/EntityDataAccessor.java
++++ b/src/main/java/net/minecraft/server/commands/data/EntityDataAccessor.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.server.commands.data;
+ 
++import com.legitimoose.lsp.MooseConfig;
+ import com.mojang.brigadier.builder.ArgumentBuilder;
+ import com.mojang.brigadier.context.CommandContext;
+ import com.mojang.brigadier.exceptions.CommandSyntaxException;
+@@ -12,11 +13,13 @@ import net.minecraft.commands.CommandSourceStack;
+ import net.minecraft.commands.Commands;
+ import net.minecraft.commands.arguments.EntityArgument;
+ import net.minecraft.commands.arguments.NbtPathArgument;
+-import net.minecraft.nbt.CompoundTag;
+-import net.minecraft.nbt.NbtUtils;
+-import net.minecraft.nbt.Tag;
++import net.minecraft.nbt.*;
+ import net.minecraft.network.chat.Component;
++import net.minecraft.network.protocol.game.ClientboundSetCarriedItemPacket;
++import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
++import net.minecraft.server.level.ServerPlayer;
+ import net.minecraft.world.entity.Entity;
++import net.minecraft.world.entity.player.Inventory;
+ import net.minecraft.world.entity.player.Player;
+ 
+ public class EntityDataAccessor implements DataAccessor {
+@@ -44,7 +47,65 @@ public class EntityDataAccessor implements DataAccessor {
+     @Override
+     public void setData(CompoundTag nbt) throws CommandSyntaxException {
+         if (this.entity instanceof Player) {
+-            throw ERROR_NO_PLAYERS.create();
++            // Moose start - Allow modifying player data
++            if (!MooseConfig.allowPlayerDataModification)
++                throw ERROR_NO_PLAYERS.create();
++            // From - https://github.com/eclipseisoffline/modifyplayerdata/
++            CompoundTag oldNbt = NbtPredicate.getEntityTagToCompare(entity);
++
++            ServerPlayer player = (ServerPlayer) entity;
++            for (String key : nbt.getAllKeys()) {
++                if (nbt.get(key).equals(oldNbt.get(key))) {
++                    continue;
++                }
++                switch (key) {
++                    case "Air" -> player.setAirSupply(((NumericTag) nbt.get(key)).getAsInt());
++                    case "Fire" -> player.setRemainingFireTicks(((NumericTag) nbt.get(key)).getAsInt());
++                    case "Glowing" -> player.setGlowingTag(((NumericTag) nbt.get(key)).getAsByte() != 0);
++                    case "Invulnerable" -> player.setInvulnerable(((NumericTag) nbt.get(key)).getAsByte() != 0);
++                    case "Motion" -> {
++                        ListTag velocity = (ListTag) nbt.get(key);
++                        player.setDeltaMovement(((NumericTag)velocity.get(0)).getAsDouble(), ((NumericTag)velocity.get(1)).getAsDouble(), ((NumericTag)velocity.get(2)).getAsDouble());
++                        player.connection.sendPacket(new ClientboundSetEntityMotionPacket(player));
++                    }
++                    case "NoGravity" -> player.setNoGravity(((NumericTag) nbt.get(key)).getAsByte() != 0);
++                    case "PortalCooldown" -> player.setPortalCooldown(((NumericTag) nbt.get(key)).getAsInt());
++                    case "Silent" -> player.setSilent(((NumericTag) nbt.get(key)).getAsByte() != 0);
++                    case "Health" -> player.setHealth(((NumericTag) nbt.get(key)).getAsFloat());
++                    case "abilities" -> {
++                        CompoundTag abilities = (CompoundTag) nbt.get(key);
++                        player.getAbilities().flying = abilities.getBoolean("flying");
++                        player.getAbilities().setFlyingSpeed(abilities.getFloat("flySpeed"));
++                        player.getAbilities().instabuild = abilities.getBoolean("instabuild");
++                        player.getAbilities().invulnerable = abilities.getBoolean("invulnerable");
++                        player.getAbilities().mayBuild = abilities.getBoolean("mayBuild");
++                        player.getAbilities().mayfly = abilities.getBoolean("mayfly");
++                        player.getAbilities().setWalkingSpeed(abilities.getFloat("walkSpeed"));
++
++                        player.onUpdateAbilities();
++                    }
++                    case "SelectedItemSlot" -> {
++                        int slot = ((NumericTag) nbt.get(key)).getAsInt();
++                        if (Inventory.isHotbarSlot(slot)) {
++                            player.getInventory().selected = slot;
++                            player.connection.sendPacket(new ClientboundSetCarriedItemPacket(slot));
++                        }
++                    }
++                    case "HasVisualFire" -> player.hasVisualFire = (((NumericTag) nbt.get(key)).getAsByte() != 0);
++                    case "TicksFrozen" -> player.setTicksFrozen(((NumericTag) nbt.get(key)).getAsInt());
++                    case "FallFlying" -> {
++                        if (((NumericTag) nbt.get(key)).getAsByte() != 0) {
++                            player.startFallFlying();
++                        } else {
++                            player.stopFallFlying();
++                        }
++                    }
++                    case "FoodExhaustionLevel" -> player.getFoodData().setExhaustion(((NumericTag) nbt.get(key)).getAsFloat());
++                    case "FoodLevel" -> player.getFoodData().setFoodLevel(((NumericTag) nbt.get(key)).getAsInt());
++                    case "FoodSaturationLevel" -> player.getFoodData().setSaturation(((NumericTag) nbt.get(key)).getAsFloat());
++                }
++            }
++            // Moose end - Allow modifying player data
+         } else {
+             UUID uUID = this.entity.getUUID();
+             this.entity.load(nbt);
