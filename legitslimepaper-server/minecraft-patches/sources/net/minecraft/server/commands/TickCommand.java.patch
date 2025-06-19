@@ -4,8 +4,8 @@
      public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
          dispatcher.register(
              Commands.literal("tick")
--                .requires(commandSourceStack -> commandSourceStack.hasPermission(3))
-+                .requires(commandSourceStack -> commandSourceStack.hasPermission(2))
+-                .requires(Commands.hasPermission(3))
++                .requires(Commands.hasPermission(2))
                  .then(Commands.literal("query").executes(commandContext -> tickQuery(commandContext.getSource())))
                  .then(
                      Commands.literal("rate")

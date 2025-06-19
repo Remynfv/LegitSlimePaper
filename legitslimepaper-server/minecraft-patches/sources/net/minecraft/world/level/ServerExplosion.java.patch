@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/ServerExplosion.java
 +++ b/net/minecraft/world/level/ServerExplosion.java
-@@ -319,7 +_,7 @@
+@@ -316,7 +_,7 @@
      ) {
          this.level = level;
          this.source = source;
@@ -9,7 +9,7 @@
          this.center = center;
          this.fire = fire;
          this.blockInteraction = blockInteraction;
-@@ -648,11 +_,7 @@
+@@ -637,11 +_,7 @@
      }
  
      public void explode() {

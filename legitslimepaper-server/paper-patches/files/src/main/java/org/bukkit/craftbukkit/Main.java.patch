@@ -1,12 +1,12 @@
 --- a/src/main/java/org/bukkit/craftbukkit/Main.java
 +++ b/src/main/java/org/bukkit/craftbukkit/Main.java
-@@ -183,6 +_,14 @@
+@@ -169,6 +_,14 @@
+                         .ofType(String.class)
                          .defaultsTo("Unknown Server")
                          .describedAs("Name");
-                 // Paper end
 +
 +                // Moose start
-+                acceptsAll(Main.asList("M", "moose-settings"), "File for moose settings")
++                acceptsAll(asList("M", "moose-settings"), "File for moose settings")
 +                    .withRequiredArg()
 +                    .ofType(File.class)
 +                    .defaultsTo(new File("moose.yml"))
