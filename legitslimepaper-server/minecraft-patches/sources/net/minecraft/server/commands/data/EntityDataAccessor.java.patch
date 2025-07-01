@@ -76,9 +76,9 @@
 +                            player.stopFallFlying();
 +                        }
 +                    }
-+                    case "FoodExhaustionLevel" -> player.getFoodData().exhaustionLevel = ((NumericTag) other.get(key)).floatValue();
-+                    case "FoodLevel" -> player.getFoodData().setFoodLevel(((NumericTag) other.get(key)).intValue());
-+                    case "FoodSaturationLevel" -> player.getFoodData().setSaturation(((NumericTag) other.get(key)).floatValue());
++                    case "foodExhaustionLevel" -> player.getFoodData().exhaustionLevel = ((NumericTag) other.get(key)).floatValue();
++                    case "foodLevel" -> player.getFoodData().setFoodLevel(((NumericTag) other.get(key)).intValue());
++                    case "foodSaturationLevel" -> player.getFoodData().setSaturation(((NumericTag) other.get(key)).floatValue());
 +                }
 +            }
 +            // Moose end - Allow modifying player data
