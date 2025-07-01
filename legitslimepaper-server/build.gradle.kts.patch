@@ -1,6 +1,6 @@
 --- a/aspaper-server/build.gradle.kts
 +++ b/aspaper-server/build.gradle.kts
-@@ -33,7 +_,22 @@
+@@ -35,7 +_,22 @@
          }
      }
  
@@ -23,8 +23,8 @@
 +    activeFork = legitslimepaper
  
      spigot {
-         enabled = false
-@@ -120,10 +_,14 @@
+         enabled = true
+@@ -122,10 +_,14 @@
      main {
          java { srcDir("../paper-server/src/main/java") }
          resources { srcDir("../paper-server/src/main/resources") }
@@ -39,7 +39,7 @@
      }
  }
  val log4jPlugins = sourceSets.create("log4jPlugins") {
-@@ -150,7 +_,7 @@
+@@ -152,7 +_,7 @@
  }
  
  dependencies {
@@ -48,12 +48,12 @@
      implementation(project(":core")) //ASP
      implementation("ca.spottedleaf:concurrentutil:0.0.3")
      implementation("org.jline:jline-terminal-ffm:3.27.1") // use ffm on java 22+
-@@ -227,14 +_,14 @@
+@@ -229,14 +_,14 @@
          val gitBranch = git.exec(providers, "rev-parse", "--abbrev-ref", "HEAD").get().trim()
          attributes(
              "Main-Class" to "org.bukkit.craftbukkit.Main",
 -            "Implementation-Title" to "AdvancedSlimePaper", //ASP
-+            "Implementation-Title" to "LegitSlimePaper", //Moose
++            "Implementation-Title" to "LegitSlimePaper", // Moose
              "Implementation-Version" to implementationVersion,
              "Implementation-Vendor" to date,
 -            "Specification-Title" to "AdvancedSlimePaper", //ASP

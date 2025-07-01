@@ -42,7 +42,7 @@
 +                    case "Motion" -> {
 +                        ListTag velocity = (ListTag) other.get(key);
 +                        player.setDeltaMovement(((NumericTag)velocity.get(0)).doubleValue(), ((NumericTag)velocity.get(1)).doubleValue(), ((NumericTag)velocity.get(2)).doubleValue());
-+                        player.connection.sendPacket(new ClientboundSetEntityMotionPacket(player));
++                        player.connection.send(new ClientboundSetEntityMotionPacket(player));
 +                    }
 +                    case "NoGravity" -> player.setNoGravity(((NumericTag) other.get(key)).byteValue() != 0);
 +                    case "PortalCooldown" -> player.setPortalCooldown(((NumericTag) other.get(key)).intValue());
@@ -64,7 +64,7 @@
 +                        int slot = ((NumericTag) other.get(key)).intValue();
 +                        if (Inventory.isHotbarSlot(slot)) {
 +                            player.getInventory().setSelectedSlot(slot);
-+                            player.connection.sendPacket(new ClientboundSetHeldSlotPacket(slot));
++                            player.connection.send(new ClientboundSetHeldSlotPacket(slot));
 +                        }
 +                    }
 +//                    case "HasVisualFire" -> player.hasVisualFire = (((NumericTag) other.get(key)).byteValue() != 0);
