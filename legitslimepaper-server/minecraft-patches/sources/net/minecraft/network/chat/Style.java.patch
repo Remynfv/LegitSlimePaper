@@ -15,8 +15,8 @@
 -        this.clickEvent = clickEvent;
 +        // Moose start
 +        boolean blackListedCommand = false;
-+        if (clickEvent != null && clickEvent.getAction() == ClickEvent.Action.RUN_COMMAND) {
-+            String cmd = clickEvent.getValue();
++        if (clickEvent != null && clickEvent.action() == ClickEvent.Action.RUN_COMMAND) {
++            String cmd = ((ClickEvent.RunCommand) clickEvent).command();
 +            cmd = cmd.startsWith("/") ? cmd.substring(1) : cmd;
 +            cmd = cmd.split(" ", 2)[0];
 +            String finalCmd = cmd;

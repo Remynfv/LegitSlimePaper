@@ -8,7 +8,7 @@
  import net.minecraft.commands.ExecutionCommandSource;
  import net.minecraft.commands.FunctionInstantiationException;
  import net.minecraft.commands.execution.UnboundEntryAction;
-@@ -50,6 +_,7 @@
+@@ -51,6 +_,7 @@
  
      @Override
      public InstantiatedFunction<T> instantiate(@Nullable CompoundTag arguments, CommandDispatcher<T> dispatcher) throws FunctionInstantiationException {
