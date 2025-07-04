@@ -1,0 +1,20 @@
+--- a/net/minecraft/server/network/ServerGamePacketListenerImpl.java
++++ b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+@@ -1263,7 +_,7 @@
+     @Override
+     public void handleEntityTagQuery(ServerboundEntityTagQueryPacket packet) {
+         PacketUtils.ensureRunningOnSameThread(packet, this, this.player.serverLevel());
+-        if (this.player.hasPermissions(2)) {
++        if (this.player.hasPermissions(2) || this.player.getBukkitEntity().hasPermission("minecraft.nbt.query")) { // Moose - Add nbt.query permission
+             Entity entity = this.player.level().getEntity(packet.getEntityId());
+             if (entity != null) {
+                 CompoundTag compoundTag = entity.saveWithoutId(new CompoundTag());
+@@ -1285,7 +_,7 @@
+     @Override
+     public void handleBlockEntityTagQuery(ServerboundBlockEntityTagQueryPacket packet) {
+         PacketUtils.ensureRunningOnSameThread(packet, this, this.player.serverLevel());
+-        if (this.player.hasPermissions(2)) {
++        if (this.player.hasPermissions(2) || this.player.getBukkitEntity().hasPermission("minecraft.nbt.query")) { // Moose - Add nbt.query permission
+             BlockEntity blockEntity = this.player.level().getBlockEntity(packet.getPos());
+             CompoundTag compoundTag = blockEntity != null ? blockEntity.saveWithoutMetadata(this.player.registryAccess()) : null;
+             this.player.connection.send(new ClientboundTagQueryPacket(packet.getTransactionId(), compoundTag));
