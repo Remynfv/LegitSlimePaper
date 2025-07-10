@@ -105,3 +105,28 @@
              // Paper end
              MutableComponent mutableComponent = Component.literal(var12.getMessage() == null ? var12.getClass().getName() : var12.getMessage());
              LOGGER.error("Command exception: /{}", command, var12); // Paper - always show execution exception in console log
+@@ -494,6 +_,24 @@
+         for (CommandNode node : rootCommandNode.getChildren()) {
+             bukkit.add(node.getName());
+         }
++
++        // Moose start - Make sure non-allowed command block commands are restricted
++        dispatcherRootChildren.forEach(commandNode -> {
++            if (!commandNode.commandBlockAllowed)
++                commandNode.requirement = new PermissionCheck<CommandSourceStack>() {
++                    @Override
++                    public int requiredLevel() {
++                        return 2;
++                    }
++
++                    @Override
++                    public boolean test(CommandSourceStack commandSourceStack) {
++                        return true;
++                    }
++                };
++        });
++        // Moose end
++
+         // Paper start - Perf: Async command map building
+         new com.destroystokyo.paper.event.brigadier.AsyncPlayerSendCommandsEvent<CommandSourceStack>(player.getBukkitEntity(), (RootCommandNode) rootCommandNode, false).callEvent(); // Paper - Brigadier API
+         net.minecraft.server.MinecraftServer.getServer().execute(() -> {
