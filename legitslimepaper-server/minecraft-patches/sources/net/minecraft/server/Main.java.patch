@@ -22,15 +22,20 @@
  import net.minecraft.SharedConstants;
  import net.minecraft.SuppressForbidden;
  import net.minecraft.Util;
-@@ -57,7 +_,6 @@
- import net.minecraft.world.level.storage.LevelStorageSource;
- import net.minecraft.world.level.storage.LevelSummary;
- import net.minecraft.world.level.storage.PrimaryLevelData;
+@@ -54,11 +_,7 @@
+ import net.minecraft.world.level.levelgen.WorldDimensions;
+ import net.minecraft.world.level.levelgen.WorldOptions;
+ import net.minecraft.world.level.levelgen.presets.WorldPresets;
+-import net.minecraft.world.level.storage.LevelDataAndDimensions;
+-import net.minecraft.world.level.storage.LevelStorageSource;
+-import net.minecraft.world.level.storage.LevelSummary;
+-import net.minecraft.world.level.storage.PrimaryLevelData;
 -import net.minecraft.world.level.storage.WorldData;
++import net.minecraft.world.level.storage.*;
  import org.slf4j.Logger;
  
  public class Main {
-@@ -139,6 +_,8 @@
+@@ -140,6 +_,8 @@
                  LOGGER.info("Initialized '{}' and '{}'", path1.toAbsolutePath(), path2.toAbsolutePath());
                  return;
              }

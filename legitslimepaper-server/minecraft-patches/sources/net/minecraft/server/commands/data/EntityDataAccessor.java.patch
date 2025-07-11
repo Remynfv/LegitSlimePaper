@@ -1,13 +1,6 @@
 --- a/net/minecraft/server/commands/data/EntityDataAccessor.java
 +++ b/net/minecraft/server/commands/data/EntityDataAccessor.java
-@@ -1,5 +_,6 @@
- package net.minecraft.server.commands.data;
- 
-+import com.legitimoose.lsp.MooseConfig;
- import com.mojang.brigadier.builder.ArgumentBuilder;
- import com.mojang.brigadier.context.CommandContext;
- import com.mojang.brigadier.exceptions.CommandSyntaxException;
-@@ -12,11 +_,13 @@
+@@ -13,12 +_,14 @@
  import net.minecraft.commands.Commands;
  import net.minecraft.commands.arguments.EntityArgument;
  import net.minecraft.commands.arguments.NbtPathArgument;
@@ -19,75 +12,76 @@
 +import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 +import net.minecraft.network.protocol.game.ClientboundSetHeldSlotPacket;
 +import net.minecraft.server.level.ServerPlayer;
+ import net.minecraft.util.ProblemReporter;
  import net.minecraft.world.entity.Entity;
 +import net.minecraft.world.entity.player.Inventory;
  import net.minecraft.world.entity.player.Player;
- 
- public class EntityDataAccessor implements DataAccessor {
-@@ -43,7 +_,65 @@
+ import net.minecraft.world.level.storage.TagValueInput;
+ import org.slf4j.Logger;
+@@ -48,7 +_,65 @@
      @Override
      public void setData(CompoundTag other) throws CommandSyntaxException {
          if (this.entity instanceof Player) {
 -            throw ERROR_NO_PLAYERS.create();
 +            // Moose start - Allow modifying player data
-+            if (!MooseConfig.allowPlayerDataModification)
++            if (!com.legitimoose.lsp.MooseConfig.allowPlayerDataModification)
 +                throw ERROR_NO_PLAYERS.create();
 +            // From - https://github.com/eclipseisoffline/modifyplayerdata/
 +            CompoundTag oldNbt = NbtPredicate.getEntityTagToCompare(entity);
 +
 +            ServerPlayer player = (ServerPlayer) entity;
-+            for (String key : other.getAllKeys()) {
++            for (String key : other.keySet()) {
 +                if (other.get(key).equals(oldNbt.get(key))) {
 +                    continue;
 +                }
 +                switch (key) {
-+                    case "Air" -> player.setAirSupply(((NumericTag) other.get(key)).getAsInt());
-+                    case "Fire" -> player.setRemainingFireTicks(((NumericTag) other.get(key)).getAsInt());
-+                    case "Glowing" -> player.setGlowingTag(((NumericTag) other.get(key)).getAsByte() != 0);
-+                    case "Invulnerable" -> player.setInvulnerable(((NumericTag) other.get(key)).getAsByte() != 0);
++                    case "Air" -> player.setAirSupply(((NumericTag) other.get(key)).intValue());
++                    case "Fire" -> player.setRemainingFireTicks(((NumericTag) other.get(key)).intValue());
++                    case "Glowing" -> player.setGlowingTag(((NumericTag) other.get(key)).byteValue() != 0);
++                    case "Invulnerable" -> player.setInvulnerable(((NumericTag) other.get(key)).byteValue() != 0);
 +                    case "Motion" -> {
 +                        ListTag velocity = (ListTag) other.get(key);
-+                        player.setDeltaMovement(((NumericTag)velocity.get(0)).getAsDouble(), ((NumericTag)velocity.get(1)).getAsDouble(), ((NumericTag)velocity.get(2)).getAsDouble());
-+                        player.connection.sendPacket(new ClientboundSetEntityMotionPacket(player));
++                        player.setDeltaMovement(((NumericTag)velocity.get(0)).doubleValue(), ((NumericTag)velocity.get(1)).doubleValue(), ((NumericTag)velocity.get(2)).doubleValue());
++                        player.connection.send(new ClientboundSetEntityMotionPacket(player));
 +                    }
-+                    case "NoGravity" -> player.setNoGravity(((NumericTag) other.get(key)).getAsByte() != 0);
-+                    case "PortalCooldown" -> player.setPortalCooldown(((NumericTag) other.get(key)).getAsInt());
-+                    case "Silent" -> player.setSilent(((NumericTag) other.get(key)).getAsByte() != 0);
-+                    case "Health" -> player.setHealth(((NumericTag) other.get(key)).getAsFloat());
++                    case "NoGravity" -> player.setNoGravity(((NumericTag) other.get(key)).byteValue() != 0);
++                    case "PortalCooldown" -> player.setPortalCooldown(((NumericTag) other.get(key)).intValue());
++                    case "Silent" -> player.setSilent(((NumericTag) other.get(key)).byteValue() != 0);
++                    case "Health" -> player.setHealth(((NumericTag) other.get(key)).floatValue());
 +                    case "abilities" -> {
 +                        CompoundTag abilities = (CompoundTag) other.get(key);
-+                        player.getAbilities().flying = abilities.getBoolean("flying");
-+                        player.getAbilities().setFlyingSpeed(abilities.getFloat("flySpeed"));
-+                        player.getAbilities().instabuild = abilities.getBoolean("instabuild");
-+                        player.getAbilities().invulnerable = abilities.getBoolean("invulnerable");
-+                        player.getAbilities().mayBuild = abilities.getBoolean("mayBuild");
-+                        player.getAbilities().mayfly = abilities.getBoolean("mayfly");
-+                        player.getAbilities().setWalkingSpeed(abilities.getFloat("walkSpeed"));
++                        abilities.getBoolean("flying").ifPresent( flying -> player.getAbilities().flying = flying);
++                        abilities.getFloat("flySpeed").ifPresent( flySpeed -> player.getAbilities().setFlyingSpeed(flySpeed));
++                        abilities.getBoolean("instabuild").ifPresent( instabuild -> player.getAbilities().instabuild = instabuild);
++                        abilities.getBoolean("invulnerable").ifPresent( invulnerable -> player.getAbilities().invulnerable = invulnerable);
++                        abilities.getBoolean("mayBuild").ifPresent( mayBuild -> player.getAbilities().mayBuild = mayBuild);
++                        abilities.getBoolean("mayfly").ifPresent( mayfly -> player.getAbilities().mayfly = mayfly);
++                        abilities.getFloat("walkSpeed").ifPresent( walkSpeed -> player.getAbilities().setWalkingSpeed(walkSpeed));
 +
 +                        player.onUpdateAbilities();
 +                    }
 +                    case "SelectedItemSlot" -> {
-+                        int slot = ((NumericTag) other.get(key)).getAsInt();
++                        int slot = ((NumericTag) other.get(key)).intValue();
 +                        if (Inventory.isHotbarSlot(slot)) {
-+                            player.getInventory().selected = slot;
-+                            player.connection.sendPacket(new ClientboundSetHeldSlotPacket(slot));
++                            player.getInventory().setSelectedSlot(slot);
++                            player.connection.send(new ClientboundSetHeldSlotPacket(slot));
 +                        }
 +                    }
-+                    case "HasVisualFire" -> player.hasVisualFire = (((NumericTag) other.get(key)).getAsByte() != 0);
-+                    case "TicksFrozen" -> player.setTicksFrozen(((NumericTag) other.get(key)).getAsInt());
++//                    case "HasVisualFire" -> player.hasVisualFire = (((NumericTag) other.get(key)).byteValue() != 0);
++                    case "TicksFrozen" -> player.setTicksFrozen(((NumericTag) other.get(key)).intValue());
 +                    case "FallFlying" -> {
-+                        if (((NumericTag) other.get(key)).getAsByte() != 0) {
++                        if (((NumericTag) other.get(key)).byteValue() != 0) {
 +                            player.startFallFlying();
 +                        } else {
 +                            player.stopFallFlying();
 +                        }
 +                    }
-+                    case "foodExhaustionLevel" -> player.getFoodData().exhaustionLevel = ((NumericTag) other.get(key)).getAsFloat();
-+                    case "foodLevel" -> player.getFoodData().setFoodLevel(((NumericTag) other.get(key)).getAsInt());
-+                    case "foodSaturationLevel" -> player.getFoodData().setSaturation(((NumericTag) other.get(key)).getAsFloat());
++                    case "foodExhaustionLevel" -> player.getFoodData().exhaustionLevel = ((NumericTag) other.get(key)).floatValue();
++                    case "foodLevel" -> player.getFoodData().setFoodLevel(((NumericTag) other.get(key)).intValue());
++                    case "foodSaturationLevel" -> player.getFoodData().setSaturation(((NumericTag) other.get(key)).floatValue());
 +                }
 +            }
 +            // Moose end - Allow modifying player data
          } else {
              UUID uuid = this.entity.getUUID();
-             this.entity.load(other);
+ 

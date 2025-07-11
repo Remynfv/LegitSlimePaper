@@ -1,11 +1,11 @@
 --- a/net/minecraft/server/level/ServerChunkCache.java
 +++ b/net/minecraft/server/level/ServerChunkCache.java
-@@ -208,7 +_,7 @@
+@@ -211,7 +_,7 @@
          }
  
          //ASP start - No dimension data storage
 -        if(level instanceof com.infernalsuite.asp.level.SlimeLevelInstance) {
 +        if(level instanceof com.infernalsuite.asp.level.SlimeLevelInstance && false) { // Moose - Re-enable dat file storage
-             this.dataStorage = new com.infernalsuite.asp.level.ReadOnlyDimensionDataStorage(path, fixerUpper, level.registryAccess());
+             this.dataStorage = new com.infernalsuite.asp.level.ReadOnlyDimensionDataStorage(new SavedData.Context(level), path, fixerUpper, level.registryAccess());
          } else {
-             this.dataStorage = new DimensionDataStorage(path, fixerUpper, level.registryAccess());
+             this.dataStorage = new DimensionDataStorage(new SavedData.Context(level), path, fixerUpper, level.registryAccess());

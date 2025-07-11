@@ -1,7 +1,7 @@
 --- a/net/minecraft/resources/RegistryDataLoader.java
 +++ b/net/minecraft/resources/RegistryDataLoader.java
-@@ -166,11 +_,12 @@
-                 map.put(registry.key(), new IllegalStateException("Registry must be non-empty"));
+@@ -193,11 +_,12 @@
+                 map.put(registry.key(), new IllegalStateException("Registry must be non-empty: " + registry.key().location()));
              }
          });
 +        // Moose start - Don't throw an exception on invalid registry
