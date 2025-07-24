@@ -4,6 +4,9 @@
 
 Apply patches with `./gradlew applyAllPatches` and then run a dev server with `./gradlew runServer`. You can generate a mojmap jar with `./gradlew createMojmapBundlerJar`.
 
+## Important note
+
+When compiling, 10 GB of RAM are allocated to Gradle by default. If your system has just a bit more than 10 GB or lower it will freeze, potentially corrupting important stuff. To fix this you should lower the Xmx value in the gradle.properties file. 4 GB or more should be enough.
 
 ## How to contribute
 1. You first need to have the currently applied patches with `./gradlew applyAllPatches` and then you can start working on the code.
