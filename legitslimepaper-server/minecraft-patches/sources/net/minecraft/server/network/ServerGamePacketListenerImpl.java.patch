@@ -18,7 +18,7 @@
              BlockEntity blockEntity = this.player.level().getBlockEntity(packet.getPos());
              CompoundTag compoundTag = blockEntity != null ? blockEntity.saveWithoutMetadata(this.player.registryAccess()) : null;
              this.send(new ClientboundTagQueryPacket(packet.getTransactionId(), compoundTag));
-@@ -3548,7 +_,7 @@
+@@ -3492,7 +_,7 @@
      @Override
      public void handleChangeGameMode(ServerboundChangeGameModePacket packet) {
          PacketUtils.ensureRunningOnSameThread(packet, this, this.player.level());

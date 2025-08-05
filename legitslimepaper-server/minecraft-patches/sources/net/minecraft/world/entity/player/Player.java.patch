@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/player/Player.java
 +++ b/net/minecraft/world/entity/player/Player.java
-@@ -2106,7 +_,7 @@
+@@ -2105,7 +_,7 @@
      }
  
      public boolean canUseGameMasterBlocks() {
