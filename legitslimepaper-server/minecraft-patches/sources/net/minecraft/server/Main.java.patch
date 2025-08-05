@@ -35,12 +35,21 @@
  import org.slf4j.Logger;
  
  public class Main {
-@@ -140,6 +_,8 @@
-                 LOGGER.info("Initialized '{}' and '{}'", path1.toAbsolutePath(), path2.toAbsolutePath());
+@@ -141,6 +_,8 @@
                  return;
              }
-+
-+            MooseConfig.init((File) optionSet.valueOf("moose-settings")); // Moose - Load moose.yml
  
++            MooseConfig.init((File) optionSet.valueOf("moose-settings")); // Moose - Load moose.yml
++
              // Spigot start
              boolean eulaAgreed = Boolean.getBoolean("com.mojang.eula.agree");
+             if (eulaAgreed) {
+@@ -230,7 +_,7 @@
+                 LOGGER.warn("Safe mode active, only vanilla datapack will be loaded");
+             }
+ 
+-            PackRepository packRepository = ServerPacksSource.createPackRepository(levelStorageAccess);
++            PackRepository packRepository = hasOptionSpec ? ServerPacksSource.createVanillaTrustedRepository() : ServerPacksSource.createPackRepository(levelStorageAccess); // Moose
+             // CraftBukkit start
+             File bukkitDataPackFolder = new File(levelStorageAccess.getLevelPath(net.minecraft.world.level.storage.LevelResource.DATAPACK_DIR).toFile(), "bukkit");
+             if (!bukkitDataPackFolder.exists()) {
