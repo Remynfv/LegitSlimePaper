@@ -1,0 +1,13 @@
+--- a/net/minecraft/server/level/ServerPlayer.java
++++ b/net/minecraft/server/level/ServerPlayer.java
+@@ -565,8 +_,8 @@
+     }
+ 
+     @Override
+-    protected void addAdditionalSaveData(ValueOutput output) {
+-        super.addAdditionalSaveData(output);
++    protected void addAdditionalSaveData(ValueOutput output, boolean includeAll) { // Moose - Disable enderchest serializing in nbt selectors
++        super.addAdditionalSaveData(output, includeAll); // Moose
+         output.store("warden_spawn_tracker", WardenSpawnTracker.CODEC, this.wardenSpawnTracker);
+         this.storeGameTypes(output);
+         output.putBoolean("seenCredits", this.seenCredits);
