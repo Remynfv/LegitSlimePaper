@@ -1,5 +1,24 @@
 --- a/net/minecraft/world/entity/player/Player.java
 +++ b/net/minecraft/world/entity/player/Player.java
+@@ -834,7 +_,7 @@
+     }
+ 
+     @Override
+-    protected void addAdditionalSaveData(ValueOutput output) {
++    protected void addAdditionalSaveData(ValueOutput output, boolean includeAll) {
+         super.addAdditionalSaveData(output);
+         NbtUtils.addCurrentDataVersion(output);
+         this.inventory.save(output.list("Inventory", ItemStackWithSlot.CODEC));
+@@ -847,7 +_,8 @@
+         output.putInt("Score", this.getScore());
+         this.foodData.addAdditionalSaveData(output);
+         output.store("abilities", Abilities.Packed.CODEC, this.abilities.pack());
+-        this.enderChestInventory.storeAsSlots(output.list("EnderItems", ItemStackWithSlot.CODEC));
++        if (includeAll) // Moose - Disable enderchest serializing in nbt selectors
++            this.enderChestInventory.storeAsSlots(output.list("EnderItems", ItemStackWithSlot.CODEC));
+         if (!this.getShoulderEntityLeft().isEmpty()) {
+             output.store("ShoulderEntityLeft", CompoundTag.CODEC, this.getShoulderEntityLeft());
+         }
 @@ -2105,7 +_,7 @@
      }
  

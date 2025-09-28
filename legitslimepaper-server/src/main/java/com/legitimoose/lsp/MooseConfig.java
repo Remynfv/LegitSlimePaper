@@ -119,4 +119,9 @@ public class MooseConfig {
     private static void allowPlayerDataModification() {
         MooseConfig.allowPlayerDataModification = MooseConfig.getBoolean("allow-player-data-modification", false);
     }
+
+    public static boolean disableEnderchestSerializationInSelectors = false;
+    private static void disableEnderchestSerializationInSelectors() {
+        MooseConfig.disableEnderchestSerializationInSelectors = MooseConfig.getBoolean("disable-enderchest-serialization-in-selectors", false);
+    }
 }
