@@ -8,22 +8,22 @@
 +    val legitslimepaper = forks.register("legitslimepaper") {
 +        forks = aspaper
 +        upstream.patchRepo("paperServer") {
-+            upstreamRepo = aspaper.patchedRepo("paperServer")
-+            patchesDir = rootDirectory.dir("legitslimepaper-server/paper-patches")
-+            outputDir = rootDirectory.dir("paper-server")
-+        }
++                upstreamRepo = aspaper.patchedRepo("paperServer")
++                patchesDir = rootDirectory.dir("legitslimepaper-server/paper-patches")
++                outputDir = rootDirectory.dir("paper-server")
++            }
 +        upstream.patchDir("aspaperServer") {
-+            upstreamPath = "aspaper-server"
-+            excludes = setOf("src/minecraft", "paper-patches", "minecraft-patches", "build.gradle.kts", "build.gradle.kts.patch")
-+            patchesDir = rootDirectory.dir("legitslimepaper-server/aspaper-patches")
-+            outputDir = rootDirectory.dir("aspaper-server")
-+        }
++                upstreamPath = "aspaper-server"
++                excludes = setOf("src/minecraft", "paper-patches", "minecraft-patches", "build.gradle.kts", "build.gradle.kts.patch")
++                patchesDir = rootDirectory.dir("legitslimepaper-server/aspaper-patches")
++                outputDir = rootDirectory.dir("aspaper-server")
++            }
 +    }
 +
 +    activeFork = legitslimepaper
  
      spigot {
-         enabled = true
+         enabled = false
 @@ -122,10 +_,14 @@
      main {
          java { srcDir("../paper-server/src/main/java") }
@@ -39,14 +39,14 @@
      }
  }
  val log4jPlugins = sourceSets.create("log4jPlugins") {
-@@ -152,7 +_,7 @@
+@@ -153,7 +_,7 @@
  }
  
  dependencies {
 -    implementation(project(":aspaper-api")) //ASP
 +    implementation(project(":legitslimepaper-api")) //ASP + Moose
      implementation(project(":core")) //ASP
-     implementation("ca.spottedleaf:concurrentutil:0.0.3")
+     implementation("ca.spottedleaf:concurrentutil:0.0.5")
      implementation("org.jline:jline-terminal-ffm:3.27.1") // use ffm on java 22+
 @@ -224,14 +_,14 @@
          val gitBranch = git.exec(providers, "rev-parse", "--abbrev-ref", "HEAD").get().trim()

@@ -8,12 +8,12 @@
  import net.minecraft.commands.functions.CommandFunction;
  import net.minecraft.core.Registry;
  import net.minecraft.core.registries.Registries;
-@@ -89,7 +_,7 @@
+@@ -90,7 +_,7 @@
                          ResourceLocation resourceLocation1 = LISTER.fileToId(resourceLocation);
                          map1.put(resourceLocation1, CompletableFuture.supplyAsync(() -> {
                              List<String> lines = readLines(entry.getValue());
 -                            return CommandFunction.fromLines(resourceLocation1, this.dispatcher, commandSourceStack, lines);
 +                            return CommandFunction.fromLines(resourceLocation1, Commands.vanillaCommands, commandSourceStack, lines);
-                         }, backgroundExecutor));
+                         }, exectutor));
                      }
  
