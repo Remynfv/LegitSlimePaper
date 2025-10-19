@@ -14,6 +14,6 @@
                              List<String> lines = readLines(entry.getValue());
 -                            return CommandFunction.fromLines(resourceLocation1, this.dispatcher, commandSourceStack, lines);
 +                            return CommandFunction.fromLines(resourceLocation1, Commands.vanillaCommands, commandSourceStack, lines);
-                         }, exectutor));
+                         }, backgroundExecutor));
                      }
  
