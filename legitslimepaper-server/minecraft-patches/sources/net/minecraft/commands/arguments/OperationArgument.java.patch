@@ -1,0 +1,29 @@
+--- a/net/minecraft/commands/arguments/OperationArgument.java
++++ b/net/minecraft/commands/arguments/OperationArgument.java
+@@ -48,7 +_,9 @@
+ 
+     @Override
+     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
+-        return SharedSuggestionProvider.suggest(new String[]{"=", "+=", "-=", "*=", "/=", "%=", "<", ">", "><"}, builder);
++        return SharedSuggestionProvider.suggest(new String[]{"=", "+=", "-=", "*=", "/=", "%=", "<", ">", "><"
++            , "&=", "|=", "^=", "~=", "<<=", ">>=", ">>>="}, // LegitSlimePaper - Add Bit operations
++            builder);
+     }
+ 
+     @Override
+@@ -86,6 +_,15 @@
+             };
+             case "<" -> Math::min;
+             case ">" -> Math::max;
++            // LegitSlimePaper start - Add Bit operations
++            case "&=" -> (targetScore, sourceScore) -> targetScore & sourceScore;
++            case "|=" -> (targetScore, sourceScore) -> targetScore | sourceScore;
++            case "^=" -> (targetScore, sourceScore) -> targetScore ^ sourceScore;
++            case "~=" -> (targetScore, sourceScore) -> ~sourceScore;
++            case "<<=" -> (targetScore, sourceScore) -> targetScore << sourceScore;
++            case ">>=" -> (targetScore, sourceScore) -> targetScore >> sourceScore;
++            case ">>>=" -> (targetScore, sourceScore) -> targetScore >>> sourceScore;
++            // LegitSlimePaper end - Add Bit operations
+             default -> throw ERROR_INVALID_OPERATION.create();
+         };
+     }

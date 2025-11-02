@@ -1,0 +1,19 @@
+--- a/net/minecraft/server/commands/ScoreboardCommand.java
++++ b/net/minecraft/server/commands/ScoreboardCommand.java
+@@ -66,6 +_,7 @@
+     );
+ 
+     public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext context) {
++        OperationArgument operationArgument = OperationArgument.operation(); // LegitSlimePaper - Add Bit operations
+         dispatcher.register(
+             Commands.literal("scoreboard")
+                 .requires(Commands.hasPermission(2))
+@@ -365,7 +_,7 @@
+                                         .then(
+                                             Commands.argument("targetObjective", ObjectiveArgument.objective())
+                                                 .then(
+-                                                    Commands.argument("operation", OperationArgument.operation())
++                                                    Commands.argument("operation", operationArgument).suggests(operationArgument::listSuggestions) // LegitSlimePaper - Add Bit operations
+                                                         .then(
+                                                             Commands.argument("source", ScoreHolderArgument.scoreHolders())
+                                                                 .suggests(ScoreHolderArgument.SUGGEST_SCORE_HOLDERS)
