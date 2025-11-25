@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -1366,7 +_,7 @@
+@@ -1367,7 +_,7 @@
      @Override
      public void handleEntityTagQuery(ServerboundEntityTagQueryPacket packet) {
          PacketUtils.ensureRunningOnSameThread(packet, this, this.player.level());
@@ -9,7 +9,7 @@
              Entity entity = this.player.level().getEntity(packet.getEntityId());
              if (entity != null) {
                  try (ProblemReporter.ScopedCollector scopedCollector = new ProblemReporter.ScopedCollector(entity.problemPath(), LOGGER)) {
-@@ -1392,7 +_,7 @@
+@@ -1393,7 +_,7 @@
      @Override
      public void handleBlockEntityTagQuery(ServerboundBlockEntityTagQueryPacket packet) {
          PacketUtils.ensureRunningOnSameThread(packet, this, this.player.level());
@@ -18,7 +18,7 @@
              BlockEntity blockEntity = this.player.level().getBlockEntity(packet.getPos());
              CompoundTag compoundTag = blockEntity != null ? blockEntity.saveWithoutMetadata(this.player.registryAccess()) : null;
              this.send(new ClientboundTagQueryPacket(packet.getTransactionId(), compoundTag));
-@@ -3508,7 +_,7 @@
+@@ -3509,7 +_,7 @@
      @Override
      public void handleChangeGameMode(ServerboundChangeGameModePacket packet) {
          PacketUtils.ensureRunningOnSameThread(packet, this, this.player.level());

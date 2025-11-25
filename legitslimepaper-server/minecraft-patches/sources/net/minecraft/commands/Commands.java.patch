@@ -75,7 +75,7 @@
  
          try {
 +            // Moose start - Command block whitelist
-+            if (parseResults.getContext().getSource().source instanceof BaseCommandBlock) {
++            if (parseResults.getContext().getSource().source instanceof BaseCommandBlock.CloseableCommandBlockSource) {
 +                List<ParsedCommandNode<CommandSourceStack>> context = parseResults.getContext().getNodes();
 +                if (!context.isEmpty() && !context.getFirst().getNode().commandBlockAllowed) {
 +                    throw new Exception("Non-vanilla commands cannot be executed in command blocks.");
@@ -95,14 +95,7 @@
              // Paper end
              MutableComponent mutableComponent = Component.literal(var12.getMessage() == null ? var12.getClass().getName() : var12.getMessage());
              LOGGER.error("Command exception: /{}", command, var12); // Paper - always show execution exception in console log
-@@ -501,12 +_,27 @@
-         for (CommandNode node : rootCommandNode.getChildren()) {
-             bukkit.add(node.getName());
-         }
-+
-         // Paper start - Perf: Async command map building
-         new com.destroystokyo.paper.event.brigadier.AsyncPlayerSendCommandsEvent<CommandSourceStack>(player.getBukkitEntity(), (RootCommandNode) rootCommandNode, false).callEvent(); // Paper - Brigadier API
-         net.minecraft.server.MinecraftServer.getServer().execute(() -> {
+@@ -507,6 +_,20 @@
              runSync(player, bukkit, rootCommandNode);
          });
      }

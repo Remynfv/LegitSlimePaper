@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -535,8 +_,8 @@
+@@ -536,8 +_,8 @@
      }
  
      @Override
