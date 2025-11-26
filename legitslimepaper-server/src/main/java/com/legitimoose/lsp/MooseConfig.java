@@ -124,4 +124,9 @@ public class MooseConfig {
     private static void disableEnderchestSerializationInSelectors() {
         MooseConfig.disableEnderchestSerializationInSelectors = MooseConfig.getBoolean("disable-enderchest-serialization-in-selectors", false);
     }
+
+    public static boolean allowCommandBlocks = true;
+    private static void allowCommandBlocks() {
+        MooseConfig.allowCommandBlocks = MooseConfig.getBoolean("allow-commandblocks", true);
+    }
 }
