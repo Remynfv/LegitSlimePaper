@@ -1,10 +1,13 @@
 --- a/src/main/java/com/infernalsuite/asp/SlimeNMSBridgeImpl.java
 +++ b/src/main/java/com/infernalsuite/asp/SlimeNMSBridgeImpl.java
-@@ -79,6 +_,7 @@
+@@ -79,8 +_,10 @@
          // Some stuff is needed when loading overworld world
          SlimeLevelInstance instance = ((SlimeInMemoryWorld) this.loadInstance(defaultWorld, Level.OVERWORLD)).getInstance();
          DimensionDataStorage worldpersistentdata = instance.getDataStorage();
 +        instance.getServer().readScoreboard(worldpersistentdata); // Moose
          instance.getCraftServer().scoreboardManager = new org.bukkit.craftbukkit.scoreboard.CraftScoreboardManager(instance.getServer(), instance.getScoreboard());
          instance.getServer().commandStorage = new CommandStorage(worldpersistentdata);
++        instance.getServer().worldData = instance.serverLevelData; // Moose - Set default spawn location correctly (and prob more)
  
+         return true;
+     }
