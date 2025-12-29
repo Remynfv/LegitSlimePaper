@@ -1,6 +1,6 @@
 --- a/aspaper-server/build.gradle.kts
 +++ b/aspaper-server/build.gradle.kts
-@@ -32,7 +_,22 @@
+@@ -31,7 +_,22 @@
          }
      }
  
@@ -23,7 +23,7 @@
 +    activeFork = legitslimepaper
  
      spigot {
-         enabled = true
+         enabled = false
 @@ -119,10 +_,14 @@
      main {
          java { srcDir("../paper-server/src/main/java") }
@@ -48,7 +48,7 @@
      implementation(project(":core")) //ASP
      implementation("ca.spottedleaf:concurrentutil:0.0.7")
      implementation("org.jline:jline-terminal-ffm:3.27.1") // use ffm on java 22+
-@@ -221,14 +_,14 @@
+@@ -222,14 +_,14 @@
          val gitBranch = git.exec(providers, "rev-parse", "--abbrev-ref", "HEAD").get().trim()
          attributes(
              "Main-Class" to "org.bukkit.craftbukkit.Main",

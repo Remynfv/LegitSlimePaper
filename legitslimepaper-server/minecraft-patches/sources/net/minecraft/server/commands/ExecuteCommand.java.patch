@@ -1,11 +1,11 @@
 --- a/net/minecraft/server/commands/ExecuteCommand.java
 +++ b/net/minecraft/server/commands/ExecuteCommand.java
-@@ -142,7 +_,7 @@
+@@ -148,7 +_,7 @@
          dispatcher.register(
              Commands.literal("execute")
-                 .requires(Commands.hasPermission(2))
+                 .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
 -                .then(Commands.literal("run").redirect(dispatcher.getRoot()))
 +                .then(Commands.literal("run").redirect(Commands.vanillaCommands.getRoot())) // Moose - Only run vanilla commands
                  .then(addConditionals(literalCommandNode, Commands.literal("if"), true, buildContext))
                  .then(addConditionals(literalCommandNode, Commands.literal("unless"), false, buildContext))
-                 .then(Commands.literal("as").then(Commands.argument("targets", EntityArgument.entities()).fork(literalCommandNode, commandContext -> {
+                 .then(Commands.literal("as").then(Commands.argument("targets", EntityArgument.entities()).fork(literalCommandNode, context -> {

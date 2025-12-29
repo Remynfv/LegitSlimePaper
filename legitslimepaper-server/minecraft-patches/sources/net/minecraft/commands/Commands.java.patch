@@ -20,7 +20,7 @@
  import java.util.function.Consumer;
  import java.util.function.Predicate;
  import java.util.function.UnaryOperator;
-@@ -40,7 +_,6 @@
+@@ -38,7 +_,6 @@
  import net.minecraft.network.chat.ClickEvent;
  import net.minecraft.network.chat.CommonComponents;
  import net.minecraft.network.chat.Component;
@@ -28,15 +28,7 @@
  import net.minecraft.network.chat.HoverEvent;
  import net.minecraft.network.chat.MutableComponent;
  import net.minecraft.network.protocol.game.ClientboundCommandsPacket;
-@@ -145,6 +_,7 @@
- import net.minecraft.util.profiling.jfr.JvmProfiler;
- import net.minecraft.world.flag.FeatureFlagSet;
- import net.minecraft.world.flag.FeatureFlags;
-+import net.minecraft.world.level.BaseCommandBlock;
- import net.minecraft.world.level.GameRules;
- import org.slf4j.Logger;
- 
-@@ -177,6 +_,7 @@
+@@ -186,6 +_,7 @@
          }
      };
      private final CommandDispatcher<CommandSourceStack> dispatcher = new CommandDispatcher<>();
@@ -44,7 +36,7 @@
  
      public Commands(Commands.CommandSelection selection, CommandBuildContext context) {
      // Paper start - Brigadier API - modern minecraft overloads that do not use redirects but are copies instead
-@@ -293,6 +_,25 @@
+@@ -303,6 +_,25 @@
              PublishCommand.register(this.dispatcher);
          }
  
@@ -70,12 +62,12 @@
          // Paper start - Vanilla command permission fixes
          for (final CommandNode<CommandSourceStack> node : this.dispatcher.getRoot().getChildren()) {
              if (node.getRequirement() == com.mojang.brigadier.builder.ArgumentBuilder.<CommandSourceStack>defaultRequirement()) {
-@@ -360,6 +_,15 @@
+@@ -370,6 +_,15 @@
          ContextChain<CommandSourceStack> contextChain = finishParsing(parseResults, command, commandSourceStack);
  
          try {
 +            // Moose start - Command block whitelist
-+            if (parseResults.getContext().getSource().source instanceof BaseCommandBlock.CloseableCommandBlockSource) {
++            if (parseResults.getContext().getSource().source instanceof net.minecraft.world.level.BaseCommandBlock.CloseableCommandBlockSource) {
 +                List<ParsedCommandNode<CommandSourceStack>> context = parseResults.getContext().getNodes();
 +                if (!context.isEmpty() && !context.getFirst().getNode().commandBlockAllowed) {
 +                    throw new Exception("Non-vanilla commands cannot be executed in command blocks.");
@@ -86,7 +78,7 @@
              if (contextChain != null) {
                  executeCommandInContext(
                      commandSourceStack,
-@@ -370,7 +_,7 @@
+@@ -380,7 +_,7 @@
              }
              // Paper start
          } catch (Throwable var12) { // always gracefully handle it, no matter how bad:tm:
@@ -95,12 +87,12 @@
              // Paper end
              MutableComponent mutableComponent = Component.literal(var12.getMessage() == null ? var12.getClass().getName() : var12.getMessage());
              LOGGER.error("Command exception: /{}", command, var12); // Paper - always show execution exception in console log
-@@ -507,6 +_,20 @@
+@@ -518,6 +_,20 @@
              runSync(player, bukkit, rootCommandNode);
          });
      }
 +    // Moose start - Make sure non-vanilla commands are restricted
-+    static class SpecialPermissionCheck implements Predicate<CommandSourceStack>, PermissionSource.RestrictedMarker {
++    static class SpecialPermissionCheck implements Predicate<CommandSourceStack>, RestrictedMarker {
 +        private final Predicate<CommandSourceStack> originalRequirement;
 +
 +        public SpecialPermissionCheck(Predicate<CommandSourceStack> originalRequirement) {
@@ -116,7 +108,7 @@
  
      private void runSync(ServerPlayer player, java.util.Collection<String> bukkit, RootCommandNode<CommandSourceStack> rootCommandNode) {
          // Paper end - Perf: Async command map building
-@@ -521,6 +_,15 @@
+@@ -532,6 +_,15 @@
              }
          }
          // CraftBukkit end

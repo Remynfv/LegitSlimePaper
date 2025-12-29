@@ -8,34 +8,7 @@
  import com.mojang.datafixers.DataFixer;
  import com.mojang.logging.LogUtils;
  import com.mojang.serialization.Dynamic;
-@@ -16,12 +_,9 @@
- import java.util.Optional;
- import java.util.function.BooleanSupplier;
- import javax.annotation.Nullable;
--import joptsimple.OptionParser;
-+
- import joptsimple.OptionSet;
--import joptsimple.OptionSpec;
--import joptsimple.util.PathConverter;
- import net.minecraft.CrashReport;
--import net.minecraft.DefaultUncaughtExceptionHandler;
- import net.minecraft.SharedConstants;
- import net.minecraft.SuppressForbidden;
- import net.minecraft.Util;
-@@ -52,11 +_,7 @@
- import net.minecraft.world.level.levelgen.WorldDimensions;
- import net.minecraft.world.level.levelgen.WorldOptions;
- import net.minecraft.world.level.levelgen.presets.WorldPresets;
--import net.minecraft.world.level.storage.LevelDataAndDimensions;
--import net.minecraft.world.level.storage.LevelStorageSource;
--import net.minecraft.world.level.storage.LevelSummary;
--import net.minecraft.world.level.storage.PrimaryLevelData;
--import net.minecraft.world.level.storage.WorldData;
-+import net.minecraft.world.level.storage.*;
- import org.slf4j.Logger;
- 
- public class Main {
-@@ -139,6 +_,8 @@
+@@ -137,6 +_,8 @@
                  return;
              }
  
@@ -44,7 +17,7 @@
              // Spigot start
              boolean eulaAgreed = Boolean.getBoolean("com.mojang.eula.agree");
              if (eulaAgreed) {
-@@ -228,7 +_,7 @@
+@@ -226,7 +_,7 @@
                  LOGGER.warn("Safe mode active, only vanilla datapack will be loaded");
              }
  
