@@ -1,4 +1,4 @@
- --- a/aspaper-server/build.gradle.kts
+--- a/aspaper-server/build.gradle.kts
 +++ b/aspaper-server/build.gradle.kts
 @@ -31,8 +_,22 @@
          }
