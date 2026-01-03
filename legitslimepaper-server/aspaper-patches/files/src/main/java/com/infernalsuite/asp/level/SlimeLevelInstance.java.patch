@@ -30,6 +30,15 @@
                  primaryLevelData, worldKey, worldDimension, false, 0,
                  Collections.emptyList(), true, null, environment, null, null);
          this.slimeInstance = new SlimeInMemoryWorld(slimeBootstrap, this);
+@@ -126,7 +_,7 @@
+             getWorld().readBukkitValues(Converter.convertTag(extraData.get("BukkitValues")));
+         }
+ 
+-        this.pvpMode = propertyMap.getOptionalValue(SlimeProperties.PVP).map(TriState::byBoolean).orElse(TriState.NOT_SET);
++        //this.pvpMode = propertyMap.getOptionalValue(SlimeProperties.PVP).map(TriState::byBoolean).orElse(TriState.NOT_SET); Moose - Disable PVP option to re-enable gamerule
+ 
+         this.entityDataController = new SlimeEntityDataLoader(
+                 new ca.spottedleaf.moonrise.patches.chunk_system.io.datacontroller.EntityDataController.EntityRegionFileStorage(
 @@ -172,6 +_,7 @@
                  Bukkit.getPluginManager().callEvent(new WorldSaveEvent(getWorld()));
  
