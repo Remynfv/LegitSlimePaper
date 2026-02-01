@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/player/Player.java
 +++ b/net/minecraft/world/entity/player/Player.java
-@@ -834,7 +_,7 @@
+@@ -695,7 +_,7 @@
      }
  
      @Override
@@ -9,17 +9,17 @@
          super.addAdditionalSaveData(output);
          NbtUtils.addCurrentDataVersion(output);
          this.inventory.save(output.list("Inventory", ItemStackWithSlot.CODEC));
-@@ -847,7 +_,8 @@
+@@ -708,7 +_,8 @@
          output.putInt("Score", this.getScore());
          this.foodData.addAdditionalSaveData(output);
          output.store("abilities", Abilities.Packed.CODEC, this.abilities.pack());
 -        this.enderChestInventory.storeAsSlots(output.list("EnderItems", ItemStackWithSlot.CODEC));
 +        if (includeAll) // Moose - Disable enderchest serializing in nbt selectors
 +            this.enderChestInventory.storeAsSlots(output.list("EnderItems", ItemStackWithSlot.CODEC));
-         if (!this.getShoulderEntityLeft().isEmpty()) {
-             output.store("ShoulderEntityLeft", CompoundTag.CODEC, this.getShoulderEntityLeft());
-         }
-@@ -2105,7 +_,7 @@
+         this.lastDeathLocation.ifPresent(globalPos -> output.store("LastDeathLocation", GlobalPos.CODEC, globalPos));
+         output.storeNullable("current_explosion_impact_pos", Vec3.CODEC, this.currentImpulseImpactPos);
+         output.putBoolean("ignore_fall_damage_from_current_explosion", this.ignoreFallDamageFromCurrentImpulse);
+@@ -1891,7 +_,7 @@
      }
  
      public boolean canUseGameMasterBlocks() {

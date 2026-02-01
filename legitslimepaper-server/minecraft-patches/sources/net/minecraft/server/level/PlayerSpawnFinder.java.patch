@@ -1,0 +1,16 @@
+--- a/net/minecraft/server/level/PlayerSpawnFinder.java
++++ b/net/minecraft/server/level/PlayerSpawnFinder.java
+@@ -63,7 +_,12 @@
+             playerSpawnFinder.scheduleNext();
+             return playerSpawnFinder.finishedFuture;
+         } else {
+-            return CompletableFuture.completedFuture(fixupSpawnHeight(level, pos));
++            // Moose start - ensure chunks are loaded for spawn search
++            int sectionPosX = SectionPos.blockToSectionCoord(pos.getX());
++            int sectionPosZ = SectionPos.blockToSectionCoord(pos.getZ());
++            return level.moonrise$getChunkTaskScheduler().chunkHolderManager.addTicketAndLoadWithRadius(TicketType.SPAWN_SEARCH, new ChunkPos(sectionPosX, sectionPosZ), 0, net.minecraft.world.level.chunk.status.ChunkStatus.FULL, ca.spottedleaf.concurrentutil.util.Priority.HIGH).
++                    thenApply((v) -> { return fixupSpawnHeight(level, pos); });
++            // Moose end
+         }
+     }
+ 

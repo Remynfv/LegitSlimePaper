@@ -1,0 +1,11 @@
+--- a/net/minecraft/server/players/PlayerList.java
++++ b/net/minecraft/server/players/PlayerList.java
+@@ -1187,6 +_,8 @@
+         PlayerAdvancements playerAdvancements = player.getAdvancements(); // CraftBukkit
+         if (playerAdvancements == null) {
+             Path path = this.server.getWorldPath(LevelResource.PLAYER_ADVANCEMENTS_DIR).resolve(uuid + ".json");
++            if (MinecraftServer.getServer().overworld() instanceof com.infernalsuite.asp.level.SlimeLevelInstance) // Moose - Change advancements path for slime overworlds
++                path = this.server.getWorldPath(LevelResource.PLAYER_DATA_DIR).resolve("advancements" + File.separator + uuid + ".json"); // Moose - Change advancements path for slime overworlds
+             playerAdvancements = new PlayerAdvancements(this.server.getFixerUpper(), this, this.server.getAdvancements(), path, player);
+             // this.advancements.put(uuid, playerAdvancements); // CraftBukkit
+         }

@@ -22,7 +22,7 @@
  import net.minecraft.SharedConstants;
  import net.minecraft.SuppressForbidden;
  import net.minecraft.Util;
-@@ -54,11 +_,7 @@
+@@ -52,11 +_,7 @@
  import net.minecraft.world.level.levelgen.WorldDimensions;
  import net.minecraft.world.level.levelgen.WorldOptions;
  import net.minecraft.world.level.levelgen.presets.WorldPresets;
@@ -35,7 +35,7 @@
  import org.slf4j.Logger;
  
  public class Main {
-@@ -141,6 +_,8 @@
+@@ -139,6 +_,8 @@
                  return;
              }
  
@@ -44,7 +44,7 @@
              // Spigot start
              boolean eulaAgreed = Boolean.getBoolean("com.mojang.eula.agree");
              if (eulaAgreed) {
-@@ -230,7 +_,7 @@
+@@ -228,7 +_,7 @@
                  LOGGER.warn("Safe mode active, only vanilla datapack will be loaded");
              }
  
