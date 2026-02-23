@@ -1,0 +1,11 @@
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaSkull.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaSkull.java
+@@ -110,7 +_,7 @@
+             tag.put(CraftMetaSkull.SKULL_PROFILE, this.profile);
+             // Fill in textures
+             PlayerProfile ownerProfile = new CraftPlayerProfile(this.profile); // getOwnerProfile may return null
+-            if (ownerProfile.getTextures().isEmpty()) {
++            if (ownerProfile.getTextures().isEmpty() && false) { // Moose - Disable late-loading the profile data
+                 ownerProfile.update().thenAcceptAsync((filledProfile) -> { // Paper - run on main thread
+                     this.setOwnerProfile(filledProfile);
+                     tag.skullCallback(this.profile); // Paper - actually set profile on itemstack
