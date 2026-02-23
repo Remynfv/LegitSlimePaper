@@ -16,4 +16,14 @@ rootProject.name = "legitslimepaper"
 include("legitslimepaper-api")
 include("legitslimepaper-server")
 
-include("core", "api")
+fun optionalProject(path: String) {
+    val d = file(path)
+    if (d.isDirectory) {
+        include(path)
+    } else {
+        logger.lifecycle("Skipping $path (missing dir: ${d.path})")
+    }
+}
+
+optionalProject("core")
+optionalProject("api")

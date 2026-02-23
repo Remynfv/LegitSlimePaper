@@ -1,0 +1,11 @@
+--- a/ca/spottedleaf/moonrise/patches/chunk_system/level/entity/ChunkEntitySlices.java
++++ b/ca/spottedleaf/moonrise/patches/chunk_system/level/entity/ChunkEntitySlices.java
+@@ -545,6 +_,8 @@
+                     if (entity == null || entity == except || !entity.getBoundingBox().intersects(box)) {
+                         continue;
+                     }
++                    if (except instanceof net.minecraft.server.level.ServerPlayer player && !player.getBukkitEntity().canSee(entity.getBukkitEntity())) // Moose - Disable collisions for hidden entities
++                        continue;
+ 
+                     if (predicate != null && !predicate.test(entity)) {
+                         continue;

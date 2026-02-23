@@ -1,29 +1,29 @@
 --- a/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -1367,7 +_,7 @@
+@@ -1385,7 +_,7 @@
      @Override
      public void handleEntityTagQuery(ServerboundEntityTagQueryPacket packet) {
          PacketUtils.ensureRunningOnSameThread(packet, this, this.player.level());
--        if (this.player.hasPermissions(2)) {
-+        if (this.player.hasPermissions(2) || this.player.getBukkitEntity().hasPermission("minecraft.nbt.query")) { // Moose - Add nbt.query permission
+-        if (this.player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)) {
++        if (this.player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER) || this.player.getBukkitEntity().hasPermission("minecraft.nbt.query")) { // Moose - Add nbt.query permission
              Entity entity = this.player.level().getEntity(packet.getEntityId());
              if (entity != null) {
                  try (ProblemReporter.ScopedCollector scopedCollector = new ProblemReporter.ScopedCollector(entity.problemPath(), LOGGER)) {
-@@ -1393,7 +_,7 @@
+@@ -1411,7 +_,7 @@
      @Override
      public void handleBlockEntityTagQuery(ServerboundBlockEntityTagQueryPacket packet) {
          PacketUtils.ensureRunningOnSameThread(packet, this, this.player.level());
--        if (this.player.hasPermissions(2)) {
-+        if (this.player.hasPermissions(2) || this.player.getBukkitEntity().hasPermission("minecraft.nbt.query")) { // Moose - Add nbt.query permission
+-        if (this.player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)) {
++        if (this.player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER) || this.player.getBukkitEntity().hasPermission("minecraft.nbt.query")) { // Moose - Add nbt.query permission
              BlockEntity blockEntity = this.player.level().getBlockEntity(packet.getPos());
              CompoundTag compoundTag = blockEntity != null ? blockEntity.saveWithoutMetadata(this.player.registryAccess()) : null;
              this.send(new ClientboundTagQueryPacket(packet.getTransactionId(), compoundTag));
-@@ -3509,7 +_,7 @@
+@@ -3581,7 +_,7 @@
      @Override
      public void handleChangeGameMode(ServerboundChangeGameModePacket packet) {
          PacketUtils.ensureRunningOnSameThread(packet, this, this.player.level());
--        if (!this.player.hasPermissions(2)) {
-+        if (!this.player.hasPermissions(2) && !this.player.getBukkitEntity().hasPermission("minecraft.gamemodeswitcher")) { // Moose: Added a permission to allow players to change their own gamemode with F3 shortcut
+-        if (!GameModeCommand.PERMISSION_CHECK.check(this.player.permissions())) {
++        if (!GameModeCommand.PERMISSION_CHECK.check(this.player.permissions())  && !this.player.getBukkitEntity().hasPermission("minecraft.gamemodeswitcher")) { // Moose: Added a permission to allow players to change their own gamemode with F3 shortcut)
              LOGGER.warn(
                  "Player {} tried to change game mode to {} without required permissions",
                  this.player.getGameProfile().name(),
