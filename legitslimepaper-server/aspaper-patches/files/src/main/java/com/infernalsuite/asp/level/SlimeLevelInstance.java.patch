@@ -1,6 +1,6 @@
 --- a/src/main/java/com/infernalsuite/asp/level/SlimeLevelInstance.java
 +++ b/src/main/java/com/infernalsuite/asp/level/SlimeLevelInstance.java
-@@ -71,16 +_,10 @@
+@@ -73,16 +_,10 @@
      private static final Logger LOGGER = LogUtils.getClassLogger();
  
      static {
@@ -21,7 +21,7 @@
      }
  
      private static final ExecutorService WORLD_SAVER_SERVICE = Executors.newFixedThreadPool(4, new ThreadFactoryBuilder()
-@@ -94,7 +_,7 @@
+@@ -96,7 +_,7 @@
                                org.bukkit.World.Environment environment) throws IOException {
  
          super(slimeBootstrap, MinecraftServer.getServer(), MinecraftServer.getServer().executor,
@@ -30,16 +30,7 @@
                  primaryLevelData, worldKey, worldDimension, false, 0,
                  Collections.emptyList(), true, null, environment, null, null);
          this.slimeInstance = new SlimeInMemoryWorld(slimeBootstrap, this);
-@@ -126,7 +_,7 @@
-             getWorld().readBukkitValues(Converter.convertTag(extraData.get("BukkitValues")));
-         }
- 
--        this.pvpMode = propertyMap.getOptionalValue(SlimeProperties.PVP).map(TriState::byBoolean).orElse(TriState.NOT_SET);
-+        //this.pvpMode = propertyMap.getOptionalValue(SlimeProperties.PVP).map(TriState::byBoolean).orElse(TriState.NOT_SET); Moose - Disable PVP option to re-enable gamerule
- 
-         this.entityDataController = new SlimeEntityDataLoader(
-                 new ca.spottedleaf.moonrise.patches.chunk_system.io.datacontroller.EntityDataController.EntityRegionFileStorage(
-@@ -172,6 +_,7 @@
+@@ -175,6 +_,7 @@
                  Bukkit.getPluginManager().callEvent(new WorldSaveEvent(getWorld()));
  
                  //this.getChunkSource().save(forceSave);

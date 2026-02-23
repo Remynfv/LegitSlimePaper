@@ -1,6 +1,6 @@
 --- a/src/main/java/io/papermc/paper/plugin/manager/PaperPluginInstanceManager.java
 +++ b/src/main/java/io/papermc/paper/plugin/manager/PaperPluginInstanceManager.java
-@@ -235,6 +_,7 @@
+@@ -240,6 +_,7 @@
          if (!plugin.isEnabled()) {
              return;
          }
