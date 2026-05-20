@@ -1,40 +1,52 @@
 --- a/src/main/java/com/infernalsuite/asp/level/SlimeLevelInstance.java
 +++ b/src/main/java/com/infernalsuite/asp/level/SlimeLevelInstance.java
-@@ -73,16 +_,10 @@
+@@ -46,10 +_,7 @@
+ import net.minecraft.world.level.gamerules.GameRules;
+ import net.minecraft.world.level.levelgen.WorldGenSettings;
+ import net.minecraft.world.level.levelgen.WorldOptions;
+-import net.minecraft.world.level.storage.LevelData;
+-import net.minecraft.world.level.storage.LevelResource;
+-import net.minecraft.world.level.storage.LevelStorageSource;
+-import net.minecraft.world.level.storage.PrimaryLevelData;
++import net.minecraft.world.level.storage.*;
+ import net.minecraft.world.level.validation.DirectoryValidator;
+ import org.apache.commons.io.FileUtils;
+ import org.bukkit.Bukkit;
+@@ -80,17 +_,9 @@
      private static final Logger LOGGER = LogUtils.getClassLogger();
  
      static {
 -        try {
 -            Path path = Files.createTempDirectory("swm-" + UUID.randomUUID().toString().substring(0, 5)).toAbsolutePath();
 -            DirectoryValidator directoryvalidator = LevelStorageSource.parseValidator(path.resolve("allowed_symlinks.txt"));
--            CUSTOM_LEVEL_STORAGE = new LevelStorageSource(path, path, directoryvalidator, DataFixers.getDataFixer());
+-            CUSTOM_LEVEL_STORAGE_ACCESS = new LevelStorageSource(path, path, directoryvalidator, DataFixers.getDataFixer())
+-                    .createAccess("slime");
 -
 -            FileUtils.forceDeleteOnExit(path.toFile());
 -
 -        } catch (IOException ex) {
 -            throw new IllegalStateException("Couldn't create dummy file directory.", ex);
 -        }
-+        // Moose start
-+        Path path = MinecraftServer.getServer().server.getWorldContainer().toPath();
-+        CUSTOM_LEVEL_STORAGE = LevelStorageSource.createDefault(path);
++        // Moose start - Ensure the data directory is mapped correctly
++        CUSTOM_LEVEL_STORAGE_ACCESS = MinecraftServer.getServer().storageSource;
 +        // Moose end
      }
  
      private static final ExecutorService WORLD_SAVER_SERVICE = Executors.newFixedThreadPool(4, new ThreadFactoryBuilder()
-@@ -96,7 +_,7 @@
-                               org.bukkit.World.Environment environment) throws IOException {
- 
-         super(slimeBootstrap, MinecraftServer.getServer(), MinecraftServer.getServer().executor,
--                CUSTOM_LEVEL_STORAGE.createAccess(slimeBootstrap.initial().getName() + UUID.randomUUID(), dimensionKey),
-+                CUSTOM_LEVEL_STORAGE.createAccess("dat_files", dimensionKey), // Moose
-                 primaryLevelData, worldKey, worldDimension, false, 0,
-                 Collections.emptyList(), true, null, environment, null, null);
+@@ -139,7 +_,7 @@
+                 environment,
+                 null,
+                 null,
+-                new ReadOnlyDimensionDataStorage(CUSTOM_LEVEL_STORAGE_ACCESS.getDimensionPath(dimensionKey), MinecraftServer.getServer().getFixerUpper(), MinecraftServer.getServer().registryAccess()),
++                new SavedDataStorage(CUSTOM_LEVEL_STORAGE_ACCESS.getDimensionPath(dimensionKey), MinecraftServer.getServer().getFixerUpper(), MinecraftServer.getServer().registryAccess()),
+                 data
+         );
          this.slimeInstance = new SlimeInMemoryWorld(slimeBootstrap, this);
-@@ -175,6 +_,7 @@
+@@ -213,6 +_,7 @@
                  Bukkit.getPluginManager().callEvent(new WorldSaveEvent(getWorld()));
  
                  //this.getChunkSource().save(forceSave);
-+                this.getDataStorage().saveAndJoin(); // Moose
-                 this.serverLevelData.setCustomBossEvents(MinecraftServer.getServer().getCustomBossEvents().save(MinecraftServer.getServer().registryAccess()));
- 
++                this.getDataStorage().saveAndJoin();
                  if (MinecraftServer.getServer().isStopped()) { // Make sure the world gets saved before stopping the server by running it from the main thread
+                     saveInternal().get(); // Async wait for it to finish
+                 } else {

@@ -1,9 +1,11 @@
 --- a/net/minecraft/commands/functions/MacroFunction.java
 +++ b/net/minecraft/commands/functions/MacroFunction.java
-@@ -50,6 +_,7 @@
+@@ -50,7 +_,8 @@
+     }
  
      @Override
-     public InstantiatedFunction<T> instantiate(@Nullable CompoundTag arguments, CommandDispatcher<T> dispatcher) throws FunctionInstantiationException {
+-    public InstantiatedFunction<T> instantiate(final @Nullable CompoundTag arguments, final CommandDispatcher<T> dispatcher) throws FunctionInstantiationException {
++    public InstantiatedFunction<T> instantiate(final @Nullable CompoundTag arguments, CommandDispatcher<T> dispatcher) throws FunctionInstantiationException {
 +        dispatcher = (CommandDispatcher<T>) net.minecraft.commands.Commands.vanillaCommands; // Moose
          if (arguments == null) {
              throw new FunctionInstantiationException(Component.translatable("commands.function.error.missing_arguments", Component.translationArg(this.id())));

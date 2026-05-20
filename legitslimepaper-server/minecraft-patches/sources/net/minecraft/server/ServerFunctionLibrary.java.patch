@@ -1,11 +1,11 @@
 --- a/net/minecraft/server/ServerFunctionLibrary.java
 +++ b/net/minecraft/server/ServerFunctionLibrary.java
-@@ -85,7 +_,7 @@
-                     Identifier identifier1 = LISTER.fileToId(identifier);
-                     map1.put(identifier1, CompletableFuture.supplyAsync(() -> {
+@@ -88,7 +_,7 @@
+                     Identifier id = LISTER.fileToId(resourceId);
+                     result.put(id, CompletableFuture.supplyAsync(() -> {
                          List<String> lines = readLines(entry.getValue());
--                        return CommandFunction.fromLines(identifier1, this.dispatcher, commandSourceStack, lines);
-+                        return CommandFunction.fromLines(identifier1, Commands.vanillaCommands, commandSourceStack, lines);
-                     }, backgroundExecutor));
+-                        return CommandFunction.fromLines(id, this.dispatcher, compilationContext, lines);
++                        return CommandFunction.fromLines(id, Commands.vanillaCommands, compilationContext, lines); // Moose - Ensure functions use vanilla commands
+                     }, taskExecutor));
                  }
  
