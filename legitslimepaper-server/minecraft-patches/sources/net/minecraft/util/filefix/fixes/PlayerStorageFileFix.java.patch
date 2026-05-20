@@ -1,0 +1,11 @@
+--- a/net/minecraft/util/filefix/fixes/PlayerStorageFileFix.java
++++ b/net/minecraft/util/filefix/fixes/PlayerStorageFileFix.java
+@@ -11,7 +_,7 @@
+ 
+     @Override
+     public void makeFixer() {
+-        this.addFileFixOperation(FileFixOperations.move("advancements", "players/advancements"));
++        this.addFileFixOperation(FileFixOperations.move("playerdata/advancements", "players/advancements")); // Moose - Move advancements from the custom path to the new vanilla one
+         this.addFileFixOperation(FileFixOperations.move("playerdata", "players/data"));
+         this.addFileFixOperation(FileFixOperations.move("stats", "players/stats"));
+     }
