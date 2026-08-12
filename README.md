@@ -1,3 +1,5 @@
+# Archived!
+The Legitimoose server has migrated to a Fabric mod, with many of the same patches used here. Fabric allows us to be closer to vanilla, have all our code in one place, update quicker, have more control, and all that good stuff. For anyone crazy enough to mix datapacks and Paper, this repo will still be readable, but will not be receiving any more updates. Thank you LSP contributors, I'll see you on Legitimoose.com! o7
 # LegitSlimePaper - An AdvancedSlimePaper fork with command related features needed for the Legitimoose server.
 
 ## Usage
