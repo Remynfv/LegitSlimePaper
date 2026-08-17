@@ -8,7 +8,7 @@ Apply patches with `./gradlew applyAllPatches` and then run a dev server with `.
 
 ## How to contribute
 1. You first need to have the currently applied patches with `./gradlew applyAllPatches` and then you can start working on the code.
-2. If the applyAllPatches task fails, it could be because you don't have enough RAM. To fix this, refer to the "Set Gradle memory limit section.
+2. If the applyAllPatches task fails, it could be because of several issues. To troubleshoot, refer to the "Small notes" section.
 3. Then, you can edit the code in the `legitslimepaper-server/` folder
 4. After you are done, you can save your changes to the "local git repo" with `./gradlew fixupMinecraftSourcePatches` (The task name may depend on what you are working on, eg `fixupPaperServerFilePatches`. Calling more than you need should be fine even if it throws a git error.)
 5. Once all the changes are in the "local git repo", you can update the patch files with `./gradlew rebuildAllServerPatches`.
@@ -35,5 +35,18 @@ To fix this, lower the Xmx value in the gradle.properties file. An example is pr
 org.gradle.jvmargs=-Xmx4G
 ```
 This allocates 4 GB of RAM to Gradle which in most cases should be enough.
+
+## Gradle fails to compile almost instantly with an error like: `26.0.0` or `25.0.1`?
+
+This is caused by your Java version being to new to compile. To avoid this, use an older version of Java (25 and 26 are confirmed to not work, while 21 should work fine). For example, to install the Java 21 JDK on Debian Linux/Debian based distros (like Ubuntu or Raspberry Pi OS), run this command as root:
+```
+apt install openjdk-21-jdk
+```
+After this, you may also need to switch your default JDK to the newly installed one. For example, on Debian Linux, use the command `update-java-alternatives` with root privileges.
+
+To check which Java version you are currently using, you can run the following command and look at the version string it outputs:
+```
+java -version
+```
 
 For more information, refer to [PaperMC/paperweight-examples](https://github.com/PaperMC/paperweight-examples) and [PaperMC/Paper/CONTRIBUTING.md](https://github.com/PaperMC/Paper/blob/master/CONTRIBUTING.md). (The CONTRIBUTING.md also explains how to set up the development environment)
