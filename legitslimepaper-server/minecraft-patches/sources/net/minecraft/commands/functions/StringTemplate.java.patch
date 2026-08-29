@@ -1,0 +1,21 @@
+--- a/net/minecraft/commands/functions/StringTemplate.java
++++ b/net/minecraft/commands/functions/StringTemplate.java
+@@ -45,7 +_,17 @@
+     }
+ 
+     public static boolean isValidVariableName(String variableName) {
+-        for (int i = 0; i < variableName.length(); i++) {
++        // LegitSlimePaper start - Allow Escaping Function Macro Arguments
++        int variableNameLength = variableName.length();
++        if (variableNameLength == 0) {
++            return true;
++        }
++        int i = 0;
++        if (variableName.charAt(0) == '\\') {
++            i = 1;
++        }
++        for (; i < variableNameLength; i++) {
++        // LegitSlimePaper end - Allow Escaping Function Macro Arguments
+             char c = variableName.charAt(i);
+             if (!Character.isLetterOrDigit(c) && c != '_') {
+                 return false;

@@ -8,7 +8,7 @@
  import net.minecraft.commands.ExecutionCommandSource;
  import net.minecraft.commands.FunctionInstantiationException;
  import net.minecraft.commands.execution.UnboundEntryAction;
-@@ -51,6 +_,7 @@
+@@ -51,20 +_,35 @@
  
      @Override
      public InstantiatedFunction<T> instantiate(@Nullable CompoundTag arguments, CommandDispatcher<T> dispatcher) throws FunctionInstantiationException {
@@ -16,3 +16,33 @@
          if (arguments == null) {
              throw new FunctionInstantiationException(Component.translatable("commands.function.error.missing_arguments", Component.translationArg(this.id())));
          } else {
+             List<String> list = new ArrayList<>(this.parameters.size());
+ 
+             for (String string : this.parameters) {
+-                Tag tag = arguments.get(string);
++                // LegitSlimePaper start - Allow Escaping Function Macro Arguments
++                boolean escapedArgument = string.charAt(0) == '\\';
++                Tag tag;
++                if (escapedArgument) {
++                    tag = arguments.get(string.substring(1));
++                } else {
++                    tag = arguments.get(string);
++                }
++                // LegitSlimePaper end - Allow Escaping Function Macro Arguments
+                 if (tag == null) {
+                     throw new FunctionInstantiationException(
+                         Component.translatable("commands.function.error.missing_argument", Component.translationArg(this.id()), string)
+                     );
+                 }
+ 
+-                list.add(stringify(tag));
++                // LegitSlimePaper start - Allow Escaping Function Macro Arguments
++                String substitutedParameter = stringify(tag);
++                if (escapedArgument) {
++                    substitutedParameter = StringTag.escapeWithoutQuotes(substitutedParameter);
++                }
++                list.add(substitutedParameter);
++                // LegitSlimePaper end - Allow Escaping Function Macro Arguments
+             }
+ 
+             InstantiatedFunction<T> instantiatedFunction = this.cache.getAndMoveToLast(list);
