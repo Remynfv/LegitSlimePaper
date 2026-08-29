@@ -18,9 +18,9 @@
  import net.minecraft.world.entity.player.Player;
  import net.minecraft.world.level.storage.TagValueInput;
  import org.slf4j.Logger;
-@@ -48,7 +_,65 @@
+@@ -49,7 +_,65 @@
      @Override
-     public void setData(CompoundTag other) throws CommandSyntaxException {
+     public void setData(final CompoundTag tag) throws CommandSyntaxException {
          if (this.entity instanceof Player) {
 -            throw ERROR_NO_PLAYERS.create();
 +            // Moose start - Allow modifying player data
@@ -30,26 +30,26 @@
 +            CompoundTag oldNbt = NbtPredicate.getEntityTagToCompare(entity);
 +
 +            ServerPlayer player = (ServerPlayer) entity;
-+            for (String key : other.keySet()) {
-+                if (other.get(key).equals(oldNbt.get(key))) {
++            for (String key : tag.keySet()) {
++                if (tag.get(key).equals(oldNbt.get(key))) {
 +                    continue;
 +                }
 +                switch (key) {
-+                    case "Air" -> player.setAirSupply(((NumericTag) other.get(key)).intValue());
-+                    case "Fire" -> player.setRemainingFireTicks(((NumericTag) other.get(key)).intValue());
-+                    case "Glowing" -> player.setGlowingTag(((NumericTag) other.get(key)).byteValue() != 0);
-+                    case "Invulnerable" -> player.setInvulnerable(((NumericTag) other.get(key)).byteValue() != 0);
++                    case "Air" -> player.setAirSupply(((NumericTag) tag.get(key)).intValue());
++                    case "Fire" -> player.setRemainingFireTicks(((NumericTag) tag.get(key)).intValue());
++                    case "Glowing" -> player.setGlowingTag(((NumericTag) tag.get(key)).byteValue() != 0);
++                    case "Invulnerable" -> player.setInvulnerable(((NumericTag) tag.get(key)).byteValue() != 0);
 +                    case "Motion" -> {
-+                        ListTag velocity = (ListTag) other.get(key);
++                        ListTag velocity = (ListTag) tag.get(key);
 +                        player.setDeltaMovement(((NumericTag)velocity.get(0)).doubleValue(), ((NumericTag)velocity.get(1)).doubleValue(), ((NumericTag)velocity.get(2)).doubleValue());
 +                        player.connection.send(new ClientboundSetEntityMotionPacket(player));
 +                    }
-+                    case "NoGravity" -> player.setNoGravity(((NumericTag) other.get(key)).byteValue() != 0);
-+                    case "PortalCooldown" -> player.setPortalCooldown(((NumericTag) other.get(key)).intValue());
-+                    case "Silent" -> player.setSilent(((NumericTag) other.get(key)).byteValue() != 0);
-+                    case "Health" -> player.setHealth(((NumericTag) other.get(key)).floatValue());
++                    case "NoGravity" -> player.setNoGravity(((NumericTag) tag.get(key)).byteValue() != 0);
++                    case "PortalCooldown" -> player.setPortalCooldown(((NumericTag) tag.get(key)).intValue());
++                    case "Silent" -> player.setSilent(((NumericTag) tag.get(key)).byteValue() != 0);
++                    case "Health" -> player.setHealth(((NumericTag) tag.get(key)).floatValue());
 +                    case "abilities" -> {
-+                        CompoundTag abilities = (CompoundTag) other.get(key);
++                        CompoundTag abilities = (CompoundTag) tag.get(key);
 +                        abilities.getBoolean("flying").ifPresent( flying -> player.getAbilities().flying = flying);
 +                        abilities.getFloat("flySpeed").ifPresent( flySpeed -> player.getAbilities().setFlyingSpeed(flySpeed));
 +                        abilities.getBoolean("instabuild").ifPresent( instabuild -> player.getAbilities().instabuild = instabuild);
@@ -61,24 +61,24 @@
 +                        player.onUpdateAbilities();
 +                    }
 +                    case "SelectedItemSlot" -> {
-+                        int slot = ((NumericTag) other.get(key)).intValue();
++                        int slot = ((NumericTag) tag.get(key)).intValue();
 +                        if (Inventory.isHotbarSlot(slot)) {
 +                            player.getInventory().setSelectedSlot(slot);
 +                            player.connection.send(new ClientboundSetHeldSlotPacket(slot));
 +                        }
 +                    }
-+//                    case "HasVisualFire" -> player.hasVisualFire = (((NumericTag) other.get(key)).byteValue() != 0);
-+                    case "TicksFrozen" -> player.setTicksFrozen(((NumericTag) other.get(key)).intValue());
++//                    case "HasVisualFire" -> player.hasVisualFire = (((NumericTag) tag.get(key)).byteValue() != 0);
++                    case "TicksFrozen" -> player.setTicksFrozen(((NumericTag) tag.get(key)).intValue());
 +                    case "FallFlying" -> {
-+                        if (((NumericTag) other.get(key)).byteValue() != 0) {
++                        if (((NumericTag) tag.get(key)).byteValue() != 0) {
 +                            player.startFallFlying();
 +                        } else {
 +                            player.stopFallFlying();
 +                        }
 +                    }
-+                    case "foodExhaustionLevel" -> player.getFoodData().exhaustionLevel = ((NumericTag) other.get(key)).floatValue();
-+                    case "foodLevel" -> player.getFoodData().setFoodLevel(((NumericTag) other.get(key)).intValue());
-+                    case "foodSaturationLevel" -> player.getFoodData().setSaturation(((NumericTag) other.get(key)).floatValue());
++                    case "foodExhaustionLevel" -> player.getFoodData().exhaustionLevel = ((NumericTag) tag.get(key)).floatValue();
++                    case "foodLevel" -> player.getFoodData().setFoodLevel(((NumericTag) tag.get(key)).intValue());
++                    case "foodSaturationLevel" -> player.getFoodData().setSaturation(((NumericTag) tag.get(key)).floatValue());
 +                }
 +            }
 +            // Moose end - Allow modifying player data

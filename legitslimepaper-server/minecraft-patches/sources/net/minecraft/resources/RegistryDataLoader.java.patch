@@ -1,18 +1,26 @@
 --- a/net/minecraft/resources/RegistryDataLoader.java
 +++ b/net/minecraft/resources/RegistryDataLoader.java
-@@ -193,11 +_,12 @@
-                 map.put(registry.key(), new IllegalStateException("Registry must be non-empty: " + registry.key().location()));
-             }
-         });
-+        // Moose start - Don't throw an exception on invalid registry
-         if (!map.isEmpty()) {
--            throw logErrors(map);
--        } else {
--            return new RegistryAccess.ImmutableRegistryAccess(list.stream().map(RegistryDataLoader.Loader::registry).toList()).freeze();
-+            logErrors(map);
-         }
-+        return new RegistryAccess.ImmutableRegistryAccess(list.stream().map(RegistryDataLoader.Loader::registry).toList()).freeze();
-+        // Moose end
-     }
- 
-     private static RegistryOps.RegistryInfoLookup createContext(
+@@ -216,18 +_,17 @@
+                         .thenApplyAsync(
+                             ignored -> {
+                                 List<RegistryLoadTask<?>> frozenRegistries = loadTasks.stream().filter(task -> task.freezeRegistry(loadingErrors)).toList();
++                                // Moose start - Don't throw an exception on invalid registry
+                                 if (!loadingErrors.isEmpty()) {
+-                                    throw logErrors(loadingErrors);
+-                                } else {
++                                    logErrors(loadingErrors);
++                                }
+                                     List<? extends Registry<?>> registries = frozenRegistries.stream()
+                                         .flatMap(task -> task.validateRegistry(loadingErrors).stream())
+                                         .toList();
+                                     if (!loadingErrors.isEmpty()) {
+-                                        throw logErrors(loadingErrors);
+-                                    } else {
+-                                        return new RegistryAccess.ImmutableRegistryAccess(registries).freeze();
++                                        logErrors(loadingErrors);
+                                     }
+-                                }
++                                        return new RegistryAccess.ImmutableRegistryAccess(registries).freeze();
+                             },
+                             executor
+                         );

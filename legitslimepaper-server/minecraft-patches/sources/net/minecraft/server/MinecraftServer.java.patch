@@ -1,0 +1,14 @@
+--- a/net/minecraft/server/MinecraftServer.java
++++ b/net/minecraft/server/MinecraftServer.java
+@@ -998,8 +_,9 @@
+     public void saveGlobalData(final boolean flush) {
+         this.scoreboard.storeToSaveDataIfDirty(this.getDataStorage().computeIfAbsent(ScoreboardSaveData.TYPE));
+ 
+-        GameProfile singleplayerProfile = this.getSingleplayerProfile();
+-        this.storageSource.saveDataTag(this.worldData, singleplayerProfile == null ? null : singleplayerProfile.id());
++        // Moose - Disable level.dat saving
++        // GameProfile singleplayerProfile = this.getSingleplayerProfile();
++        // this.storageSource.saveDataTag(this.worldData, singleplayerProfile == null ? null : singleplayerProfile.id());
+         if (flush) {
+             this.savedDataStorage.saveAndJoin();
+         } else {

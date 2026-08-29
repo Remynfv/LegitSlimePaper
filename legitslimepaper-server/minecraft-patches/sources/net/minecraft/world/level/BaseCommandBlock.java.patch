@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/level/BaseCommandBlock.java
 +++ b/net/minecraft/world/level/BaseCommandBlock.java
-@@ -104,7 +_,7 @@
+@@ -99,7 +_,7 @@
+             return true;
          } else {
              this.successCount = 0;
-             MinecraftServer server = this.getLevel().getServer();
--            if (server.isCommandBlockEnabled() && !StringUtil.isNullOrEmpty(this.command)) {
-+            if (server.isCommandBlockEnabled() && com.legitimoose.lsp.MooseConfig.allowCommandBlocks && !StringUtil.isNullOrEmpty(this.command)) {
+-            if (level.isCommandBlockEnabled() && !StringUtil.isNullOrEmpty(this.command)) {
++            if (level.isCommandBlockEnabled() && com.legitimoose.lsp.MooseConfig.allowCommandBlocks && !StringUtil.isNullOrEmpty(this.command)) { // Moose - allow command blocks config option
                  try {
                      this.lastOutput = null;
  

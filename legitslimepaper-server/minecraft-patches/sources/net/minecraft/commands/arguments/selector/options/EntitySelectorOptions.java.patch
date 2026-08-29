@@ -1,11 +1,11 @@
 --- a/net/minecraft/commands/arguments/selector/options/EntitySelectorOptions.java
 +++ b/net/minecraft/commands/arguments/selector/options/EntitySelectorOptions.java
-@@ -345,7 +_,7 @@
+@@ -323,7 +_,7 @@
                      boolean var9;
-                     try (ProblemReporter.ScopedCollector scopedCollector = new ProblemReporter.ScopedCollector(entity.problemPath(), LOGGER)) {
-                         TagValueOutput tagValueOutput = TagValueOutput.createWithContext(scopedCollector, entity.registryAccess());
--                        entity.saveWithoutId(tagValueOutput);
-+                        entity.saveWithoutId(tagValueOutput, !com.legitimoose.lsp.MooseConfig.disableEnderchestSerializationInSelectors, false, false); // Moose - Disable enderchest serializing in nbt selectors
-                         if (entity instanceof ServerPlayer serverPlayer) {
-                             ItemStack selectedItem = serverPlayer.getInventory().getSelectedItem();
-                             if (!selectedItem.isEmpty()) {
+                     try (ProblemReporter.ScopedCollector reporter = new ProblemReporter.ScopedCollector(e.problemPath(), LOGGER)) {
+                         TagValueOutput output = TagValueOutput.createWithContext(reporter, e.registryAccess());
+-                        e.saveWithoutId(output);
++                        e.saveWithoutId(output, !com.legitimoose.lsp.MooseConfig.disableEnderchestSerializationInSelectors, false, false); // Moose - Disable enderchest serializing in nbt selectors
+                         if (e instanceof ServerPlayer player) {
+                             ItemStack selected = player.getInventory().getSelectedItem();
+                             if (!selected.isEmpty()) {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/commands/Commands.java
 +++ b/net/minecraft/commands/Commands.java
-@@ -9,16 +_,15 @@
+@@ -9,17 +_,15 @@
  import com.mojang.brigadier.builder.RequiredArgumentBuilder;
  import com.mojang.brigadier.context.CommandContextBuilder;
  import com.mojang.brigadier.context.ContextChain;
@@ -13,6 +13,7 @@
  import com.mojang.logging.LogUtils;
 -import java.util.HashMap;
 -import java.util.Map;
+-import java.util.Objects;
 -import java.util.Optional;
 -import java.util.Set;
 +
@@ -20,7 +21,7 @@
  import java.util.function.Consumer;
  import java.util.function.Predicate;
  import java.util.function.UnaryOperator;
-@@ -40,7 +_,6 @@
+@@ -39,7 +_,6 @@
  import net.minecraft.network.chat.ClickEvent;
  import net.minecraft.network.chat.CommonComponents;
  import net.minecraft.network.chat.Component;
@@ -28,23 +29,15 @@
  import net.minecraft.network.chat.HoverEvent;
  import net.minecraft.network.chat.MutableComponent;
  import net.minecraft.network.protocol.game.ClientboundCommandsPacket;
-@@ -145,6 +_,7 @@
- import net.minecraft.util.profiling.jfr.JvmProfiler;
- import net.minecraft.world.flag.FeatureFlagSet;
- import net.minecraft.world.flag.FeatureFlags;
-+import net.minecraft.world.level.BaseCommandBlock;
- import net.minecraft.world.level.GameRules;
- import org.slf4j.Logger;
- 
-@@ -177,6 +_,7 @@
+@@ -188,6 +_,7 @@
          }
      };
      private final CommandDispatcher<CommandSourceStack> dispatcher = new CommandDispatcher<>();
 +    public static CommandDispatcher<CommandSourceStack> vanillaCommands = new CommandDispatcher<>(); // Moose
  
-     public Commands(Commands.CommandSelection selection, CommandBuildContext context) {
+     public Commands(final Commands.CommandSelection commandSelection, final CommandBuildContext context) {
      // Paper start - Brigadier API - modern minecraft overloads that do not use redirects but are copies instead
-@@ -293,6 +_,25 @@
+@@ -306,6 +_,25 @@
              PublishCommand.register(this.dispatcher);
          }
  
@@ -70,37 +63,37 @@
          // Paper start - Vanilla command permission fixes
          for (final CommandNode<CommandSourceStack> node : this.dispatcher.getRoot().getChildren()) {
              if (node.getRequirement() == com.mojang.brigadier.builder.ArgumentBuilder.<CommandSourceStack>defaultRequirement()) {
-@@ -360,6 +_,15 @@
-         ContextChain<CommandSourceStack> contextChain = finishParsing(parseResults, command, commandSourceStack);
+@@ -373,6 +_,15 @@
+         ContextChain<CommandSourceStack> commandChain = finishParsing(command, commandString, sender);
  
          try {
 +            // Moose start - Command block whitelist
-+            if (parseResults.getContext().getSource().source instanceof BaseCommandBlock.CloseableCommandBlockSource) {
-+                List<ParsedCommandNode<CommandSourceStack>> context = parseResults.getContext().getNodes();
++            if (command.getContext().getSource().source instanceof net.minecraft.world.level.BaseCommandBlock.CloseableCommandBlockSource) {
++                List<ParsedCommandNode<CommandSourceStack>> context = command.getContext().getNodes();
 +                if (!context.isEmpty() && !context.getFirst().getNode().commandBlockAllowed) {
 +                    throw new Exception("Non-vanilla commands cannot be executed in command blocks.");
 +                }
 +            }
 +            // Moose end
 +
-             if (contextChain != null) {
+             if (commandChain != null) {
                  executeCommandInContext(
-                     commandSourceStack,
-@@ -370,7 +_,7 @@
+                     sender,
+@@ -383,7 +_,7 @@
              }
              // Paper start
          } catch (Throwable var12) { // always gracefully handle it, no matter how bad:tm:
 -            if (throwCommandError) throw var12; // rethrow directly if requested
 +            if (throwCommandError) throw new RuntimeException(var12); // Paper + Moose
-             // Paper end
-             MutableComponent mutableComponent = Component.literal(var12.getMessage() == null ? var12.getClass().getName() : var12.getMessage());
-             LOGGER.error("Command exception: /{}", command, var12); // Paper - always show execution exception in console log
-@@ -507,6 +_,20 @@
-             runSync(player, bukkit, rootCommandNode);
+             MutableComponent hover = Component.literal(var12.getMessage() == null ? var12.getClass().getName() : var12.getMessage());
+             LOGGER.error("Command exception: /{}", commandString, var12); // Paper - always show execution exception in console log
+             if (sender.getServer().isDebugging() || LOGGER.isDebugEnabled()) { // Paper - Debugging
+@@ -518,6 +_,20 @@
+             runSync(player, bukkit, root);
          });
      }
 +    // Moose start - Make sure non-vanilla commands are restricted
-+    static class SpecialPermissionCheck implements Predicate<CommandSourceStack>, PermissionSource.RestrictedMarker {
++    static class SpecialPermissionCheck implements Predicate<CommandSourceStack>, RestrictedMarker {
 +        private final Predicate<CommandSourceStack> originalRequirement;
 +
 +        public SpecialPermissionCheck(Predicate<CommandSourceStack> originalRequirement) {
@@ -114,21 +107,21 @@
 +    }
 +    // Moose end
  
-     private void runSync(ServerPlayer player, java.util.Collection<String> bukkit, RootCommandNode<CommandSourceStack> rootCommandNode) {
+     private void runSync(ServerPlayer player, java.util.Collection<String> bukkit, RootCommandNode<CommandSourceStack> root) {
          // Paper end - Perf: Async command map building
-@@ -521,6 +_,15 @@
+@@ -532,6 +_,15 @@
              }
          }
          // CraftBukkit end
 +
 +        // Moose start - Make sure non-vanilla commands are restricted
 +        // Put here since some events might change requirements and all
-+        rootCommandNode.getChildren().forEach(commandNode -> {
++        root.getChildren().forEach(commandNode -> {
 +            if (vanillaCommands.getRoot().getChild(commandNode.getName()) == null && !(commandNode.requirement instanceof SpecialPermissionCheck)) {
 +                commandNode.requirement = new SpecialPermissionCheck(commandNode.requirement);
 +            }
 +        });
 +        // Moose end
-         player.connection.send(new ClientboundCommandsPacket(rootCommandNode, COMMAND_NODE_INSPECTOR));
+         player.connection.send(new ClientboundCommandsPacket(root, COMMAND_NODE_INSPECTOR));
      }
  

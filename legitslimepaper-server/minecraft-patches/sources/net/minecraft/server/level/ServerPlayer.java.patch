@@ -1,10 +1,10 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -536,8 +_,8 @@
+@@ -547,8 +_,8 @@
      }
  
      @Override
--    protected void addAdditionalSaveData(ValueOutput output) {
+-    protected void addAdditionalSaveData(final ValueOutput output) {
 -        super.addAdditionalSaveData(output);
 +    protected void addAdditionalSaveData(ValueOutput output, boolean includeAll) { // Moose - Disable enderchest serializing in nbt selectors
 +        super.addAdditionalSaveData(output, includeAll); // Moose

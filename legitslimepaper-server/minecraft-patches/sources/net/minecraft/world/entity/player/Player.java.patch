@@ -1,30 +1,30 @@
 --- a/net/minecraft/world/entity/player/Player.java
 +++ b/net/minecraft/world/entity/player/Player.java
-@@ -695,7 +_,7 @@
+@@ -678,7 +_,7 @@
      }
  
      @Override
--    protected void addAdditionalSaveData(ValueOutput output) {
+-    protected void addAdditionalSaveData(final ValueOutput output) {
 +    protected void addAdditionalSaveData(ValueOutput output, boolean includeAll) {
          super.addAdditionalSaveData(output);
          NbtUtils.addCurrentDataVersion(output);
          this.inventory.save(output.list("Inventory", ItemStackWithSlot.CODEC));
-@@ -708,7 +_,8 @@
+@@ -691,7 +_,8 @@
          output.putInt("Score", this.getScore());
          this.foodData.addAdditionalSaveData(output);
          output.store("abilities", Abilities.Packed.CODEC, this.abilities.pack());
 -        this.enderChestInventory.storeAsSlots(output.list("EnderItems", ItemStackWithSlot.CODEC));
 +        if (includeAll) // Moose - Disable enderchest serializing in nbt selectors
 +            this.enderChestInventory.storeAsSlots(output.list("EnderItems", ItemStackWithSlot.CODEC));
-         this.lastDeathLocation.ifPresent(globalPos -> output.store("LastDeathLocation", GlobalPos.CODEC, globalPos));
-         output.storeNullable("current_explosion_impact_pos", Vec3.CODEC, this.currentImpulseImpactPos);
-         output.putBoolean("ignore_fall_damage_from_current_explosion", this.ignoreFallDamageFromCurrentImpulse);
-@@ -1891,7 +_,7 @@
+         this.lastDeathLocation.ifPresent(pos -> output.store("LastDeathLocation", GlobalPos.CODEC, pos));
+     }
+ 
+@@ -2013,7 +_,7 @@
      }
  
      public boolean canUseGameMasterBlocks() {
--        return this.abilities.instabuild && this.getPermissionLevel() >= 2;
-+        return this.abilities.instabuild && (this.getPermissionLevel() >= 2  || this.getBukkitEntity().hasPermission("minecraft.commandblock")); // Moose - Add permission for interacting with GameMasterBlocks
+-        return this.abilities.instabuild && this.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER);
++        return this.abilities.instabuild && (this.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER) || this.getBukkitEntity().hasPermission("minecraft.commandblock")); // Moose - Add permission for interacting with GameMasterBlocks
      }
  
-     public int getPermissionLevel() {
+     public PermissionSet permissions() {

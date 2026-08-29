@@ -1,11 +1,11 @@
 --- a/net/minecraft/server/commands/TickCommand.java
 +++ b/net/minecraft/server/commands/TickCommand.java
 @@ -20,7 +_,7 @@
-     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
+     public static void register(final CommandDispatcher<CommandSourceStack> dispatcher) {
          dispatcher.register(
              Commands.literal("tick")
--                .requires(Commands.hasPermission(3))
-+                .requires(Commands.hasPermission(2))
-                 .then(Commands.literal("query").executes(commandContext -> tickQuery(commandContext.getSource())))
+-                .requires(Commands.hasPermission(Commands.LEVEL_ADMINS))
++                .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
+                 .then(Commands.literal("query").executes(c -> tickQuery(c.getSource())))
                  .then(
                      Commands.literal("rate")

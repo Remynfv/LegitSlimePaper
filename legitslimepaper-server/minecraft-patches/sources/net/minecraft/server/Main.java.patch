@@ -8,48 +8,35 @@
  import com.mojang.datafixers.DataFixer;
  import com.mojang.logging.LogUtils;
  import com.mojang.serialization.Dynamic;
-@@ -16,12 +_,9 @@
- import java.util.Optional;
- import java.util.function.BooleanSupplier;
- import javax.annotation.Nullable;
--import joptsimple.OptionParser;
-+
- import joptsimple.OptionSet;
--import joptsimple.OptionSpec;
--import joptsimple.util.PathConverter;
- import net.minecraft.CrashReport;
--import net.minecraft.DefaultUncaughtExceptionHandler;
- import net.minecraft.SharedConstants;
- import net.minecraft.SuppressForbidden;
- import net.minecraft.Util;
-@@ -52,11 +_,7 @@
- import net.minecraft.world.level.levelgen.WorldDimensions;
- import net.minecraft.world.level.levelgen.WorldOptions;
- import net.minecraft.world.level.levelgen.presets.WorldPresets;
--import net.minecraft.world.level.storage.LevelDataAndDimensions;
--import net.minecraft.world.level.storage.LevelStorageSource;
--import net.minecraft.world.level.storage.LevelSummary;
--import net.minecraft.world.level.storage.PrimaryLevelData;
--import net.minecraft.world.level.storage.WorldData;
-+import net.minecraft.world.level.storage.*;
- import org.slf4j.Logger;
- 
- public class Main {
-@@ -139,6 +_,8 @@
+@@ -142,6 +_,8 @@
                  return;
              }
  
-+            MooseConfig.init((File) optionSet.valueOf("moose-settings")); // Moose - Load moose.yml
++            MooseConfig.init((File) options.valueOf("moose-settings")); // Moose - Load moose.yml
 +
-             // Spigot start
+             // Paper start - eula system property
              boolean eulaAgreed = Boolean.getBoolean("com.mojang.eula.agree");
              if (eulaAgreed) {
-@@ -228,7 +_,7 @@
+@@ -202,8 +_,11 @@
+                     LOGGER.info("This world was created by an incompatible version.");
+                     return;
+                 }
+-
+-                levelDataTag = DataFixers.getFileFixer().fix(access, levelDataUnfixed, new UpgradeProgress());
++                // Moose start - Calls the filefixer for 26.1 world folder migration, whilst keeping the "default" level.dat behavior
++                io.papermc.paper.world.migration.WorldFolderMigration.didInitialLoad = true; // Disable 30s conversion warning
++                DataFixers.getFileFixer().fix(access, levelDataUnfixed, new UpgradeProgress()); // (Note: Ensure a fake level.dat with a matching DataVersion exists when upgrading from 1.21.10)
++                levelDataTag = null;
++                // Moose end
+             } else {
+                 levelDataTag = null;
+             }
+@@ -214,7 +_,7 @@
                  LOGGER.warn("Safe mode active, only vanilla datapack will be loaded");
              }
  
--            PackRepository packRepository = ServerPacksSource.createPackRepository(levelStorageAccess);
-+            PackRepository packRepository = hasOptionSpec ? ServerPacksSource.createVanillaTrustedRepository() : ServerPacksSource.createPackRepository(levelStorageAccess); // Moose
+-            PackRepository packRepository = ServerPacksSource.createPackRepository(access);
++            PackRepository packRepository = safeModeEnabled ? ServerPacksSource.createVanillaTrustedRepository() : ServerPacksSource.createPackRepository(access); // Moose
              // CraftBukkit start
-             File bukkitDataPackFolder = new File(levelStorageAccess.getLevelPath(net.minecraft.world.level.storage.LevelResource.DATAPACK_DIR).toFile(), "bukkit");
+             File bukkitDataPackFolder = new File(access.getLevelPath(net.minecraft.world.level.storage.LevelResource.DATAPACK_DIR).toFile(), "bukkit");
              if (!bukkitDataPackFolder.exists()) {
